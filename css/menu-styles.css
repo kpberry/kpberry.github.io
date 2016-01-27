@@ -1,0 +1,16 @@
+/* Styling for menus on the site */
+
+.nav-menu {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    background-color: #005080;
+    color: white;
+}
+
+.menu-item {
+    float: left;
+    padding: 10px;
+    border-right: 1px solid white;
+}
