@@ -6,6 +6,14 @@ body {
     background-color: #F0F0F0;
 }
 
+.content {
+    margin-top: 50px;
+}
+
+.plain {
+    color: #001020;
+}
+
 .contrast {
     color: #F0F0F0;
 }
