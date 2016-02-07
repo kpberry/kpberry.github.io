@@ -1,10 +1,17 @@
+/*scheme colors: 262416, 3F3C29, AC8C18, 76988F, FFFFFF*/
+
 * {
+    box-sizing: border-box;
     font-family: "Verdana", sans-serif;
     color: inherit;
 }
 
 body {
-    background-color: #F0F0F0;
+    background-color: #FFFFFF;
+}
+
+li {
+    list-style: none;
 }
 
 .content {
@@ -16,7 +23,7 @@ body {
 }
 
 .contrast {
-    color: #F0F0F0;
+    color: #FFFFFF;
 }
 
 .contrast-container {

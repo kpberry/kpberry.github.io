@@ -1,10 +1,11 @@
 * {
+    box-sizing: border-box;
     font-family: "Verdana", sans-serif;
     color: inherit;
 }
 
 body {
-    background-color: #F0F0F0;
+    background-color: #FFFFFF;
 }
 
 .content {
@@ -16,20 +17,20 @@ body {
 }
 
 .contrast {
-    color: #F0F0F0;
+    color: #FFFFFF;
 }
 
 .contrast-container {
-    background-color: #005080;
+    background-color: #4868A0;
 }
 
 a {
     text-decoration: none;
-    color: #0070A0;
+    color: #385890;
 }
 
 a:hover {
-    color: #003860;
+    color: #184890;
     text-decoration: underline;
 }
 
