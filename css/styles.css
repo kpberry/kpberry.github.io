@@ -9,7 +9,7 @@ body {
 }
 
 .content {
-    margin-top: 50px;
+    margin-top: 5%;
 }
 
 .plain {
@@ -36,4 +36,5 @@ a:hover {
 
 a.contrast:hover {
     color: white;
+    background-color: #5070A8;
 }

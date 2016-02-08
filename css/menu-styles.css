@@ -4,6 +4,7 @@
     position: fixed;
     left: 0px;
     top: 0px;
+    height: 4.1%;
     width: 100%;
 }
 
@@ -20,7 +21,7 @@
     position: fixed;
     float: left;
     left: 0px;
-    top: 38px;
+    top: 4%;
     height: 100%;
     width: 20%;
     border-right: 3px solid #303030;
@@ -29,4 +30,8 @@
 .side-menu .menu-item {
     border-bottom: 2px solid #303030;
     list-style: none;
+}
+
+button {
+    margin: 5px;
 }
