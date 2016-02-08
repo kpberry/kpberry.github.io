@@ -1,19 +1,40 @@
 * {
+    box-sizing: border-box;
     font-family: "Verdana", sans-serif;
+    color: inherit;
 }
 
 body {
-    background-color: #F0F0F0;
+    background-color: #FFFFFF;
+}
+
+.content {
+    margin-top: 5%;
+}
+
+.plain {
+    color: #001020;
 }
 
 .contrast {
-    color: #F0F0F0;
+    color: #FFFFFF;
 }
 
-a.contrast {
+.contrast-container {
+    background-color: #4868A0;
+}
+
+a {
     text-decoration: none;
+    color: #385890;
+}
+
+a:hover {
+    color: #184890;
+    text-decoration: underline;
 }
 
 a.contrast:hover {
-    color: #FFFFFF;
+    color: white;
+    background-color: #5070A8;
 }
