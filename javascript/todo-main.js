@@ -1,6 +1,10 @@
 $(function() {
     var tb = new taskButton("New Item   ", 'side-0');
     tb.surface.appendTo('#main-content');
+
+    $(document).click(() => {
+        $(".fullSelected").removeClass("fullSelected");
+    });
 });
 
 var toggleMenu = function() {

@@ -4,12 +4,13 @@
     position: fixed;
     left: 0px;
     top: 0px;
-    height: 4%;
+    height: 2em%;
     width: 100%;
 }
 
 .menu-item {
     padding: 10px;
+    height: 2em;
 }
 
 .top-menu .menu-item {
