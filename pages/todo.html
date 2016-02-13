@@ -3,7 +3,8 @@
     <head>
         <title> Todo List Manager </title>
         <script src="../resources/JQuery/jquery-2.1.4.js" type="text/javascript"></script>
-        <script src="../javascript/task-button.js" type = "text/javascript"></script>
+        <script src="../resources/JQuery/jquery-ui.js" type="text/javascript"></script>
+        <script src="../javascript/task-button.js" type="text/javascript"></script>
         <script src="../javascript/todo-main.js" type="text/javascript"></script>
         <script src="../javascript/nested-linked-list.js" type="text/javascript"></script>
         <link rel="stylesheet" type="text/css" href="../css/menu-styles.css"/>
@@ -13,8 +14,15 @@
         <nav class="top-menu contrast-container">
             <a class="contrast menu-item" href="../index.html"> Kevin Berry </a>
             <a class="contrast menu-item" href="../index.html"> Home </a>
+            <a class="contrast menu-item" href="#" onclick="toggleMenu()"> Menu </a>
         </nav>
-        <div class="side-menu" id="side-menu-0">
+        <div class="side-menu open" id="side-menu-0">
+            <div class="menu-item">
+                Projects
+            </div>
+            <div class="menu-item">
+                More Projects
+            </div>
         </div>
         <div class="content row" id="main-content">
 

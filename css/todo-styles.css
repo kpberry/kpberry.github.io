@@ -6,12 +6,17 @@
     color: inherit;
 }
 
+p {
+    margin: 5px 0px 12px 5px;
+}
+
 body {
     background-color: #FFFFFF;
 }
 
 li {
     list-style: none;
+    /*transition-duration: 0.2s;*/
 }
 
 li:hover {
@@ -35,10 +40,21 @@ li:hover {
 a.contrast:hover {
     color: white;
     background-color: #404040;
+    transition-duration: 0.2s;
+}
+
+button {
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    transition-duration: 0.2s;
+    height: 100%;
+    margin: 5px;
 }
 
 button.contrast:hover {
-    background-color: #404040;
+    background-color: #40A040;
+    color: white;
 }
 
 .contrast-container {
@@ -56,8 +72,8 @@ a:hover {
 }
 
 .task {
-    border-bottom: 2px solid #303030;
-    margin-top: 5px;
+    border-bottom: 1px solid #303030;
+    padding-top: 5px;
     height: 35px;
     list-style: none;
 }

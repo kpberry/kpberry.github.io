@@ -4,7 +4,7 @@
     position: fixed;
     left: 0px;
     top: 0px;
-    height: 4.1%;
+    height: 4%;
     width: 100%;
 }
 
@@ -15,6 +15,7 @@
 .top-menu .menu-item {
     float: left;
     border-right: 1px solid white;
+    height: 100%;
 }
 
 .side-menu {
@@ -30,8 +31,4 @@
 .side-menu .menu-item {
     border-bottom: 2px solid #303030;
     list-style: none;
-}
-
-button {
-    margin: 5px;
 }

@@ -5,11 +5,11 @@ var taskButton = function(text, id, parent) {
 
     this.container = $('<li class="task col-40"></li>');
 
-    this.textContainer = $('<div class="col-15">' + text + '</div>');
+    this.textContainer = $('<p class="col-12">' + text + '</p>');
     this.textContainer.appendTo(this.container);
 
     var self = this;
-    this.buttonContainer = $('<div class="invisible col-25">');
+    this.buttonContainer = $('<div class="invisible col-20">');
 
     this.childAdder = $('<button class="contrast">Add Child</button>');
     this.childAdder.click(function() {
@@ -30,16 +30,16 @@ var taskButton = function(text, id, parent) {
 
 
     this.container.mouseenter(function() {
-        self.buttonContainer.removeClass("invisible");
+        self.buttonContainer.show();
     });
 
     this.container.mouseleave(function() {
         if (!self.container.hasClass("selected")) {
-            self.buttonContainer.addClass("invisible");
+            self.buttonContainer.hide();
         }
     });
 
-
+    //document.click -> if $("selected").size() == 0
     //copy selection and deselection logic from the other class; it's quite good
     this.container.click(function() {
         if (!(self.nextAdder.is(":hover") || self.childAdder.is(":hover"))) {
