@@ -4,32 +4,31 @@
     position: fixed;
     left: 0px;
     top: 0px;
-    height: 2em%;
     width: 100%;
 }
 
 .menu-item {
-    padding: 10px;
-    height: 2em;
+    display: inline-block;
+    line-height: 1em;
+    padding: 0.5em;
 }
 
 .top-menu .menu-item {
     float: left;
-    border-right: 1px solid white;
-    height: 100%;
+    /*border-right: 1px solid white;*/
 }
 
 .side-menu {
     position: fixed;
-    float: left;
-    left: 0px;
-    top: 4%;
+    left: -20%;
+    top: 2em;
     height: 100%;
     width: 20%;
-    border-right: 3px solid #303030;
+    /*border-right: 3px solid #404040;*/
 }
 
 .side-menu .menu-item {
-    border-bottom: 2px solid #303030;
+    /*border-bottom: 2px solid #404040;*/
     list-style: none;
+    width: 100%;
 }
