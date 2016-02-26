@@ -5,6 +5,9 @@
     left: 0px;
     top: 0px;
     width: 100%;
+    height: 2em;
+    z-index: 1;
+    font-size: 1em;
 }
 
 .menu-item {
@@ -15,15 +18,16 @@
 
 .top-menu .menu-item {
     float: left;
+    height: 100%;
     /*border-right: 1px solid white;*/
 }
 
 .side-menu {
     position: fixed;
-    left: -20%;
+    left: -15em;
     top: 2em;
     height: 100%;
-    width: 20%;
+    width: 15em;
     /*border-right: 3px solid #404040;*/
 }
 
@@ -31,4 +35,5 @@
     /*border-bottom: 2px solid #404040;*/
     list-style: none;
     width: 100%;
+    text-align: left;
 }

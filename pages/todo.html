@@ -17,16 +17,19 @@
             <a class="contrast menu-item" href="../index.html"> Kevin Berry </a>
             <a class="contrast menu-item" href="../index.html"> Home </a>
             <a class="contrast menu-item" href="#" onclick="toggleMenu()"> Menu </a>
+            <button class="contrast menu-item" onclick="load()"> Load </button>
         </nav>
         <!-- TODO add project-head class to keep track of separate projects;
             has no body (behaves like a surface) but stores a pointer to the
             associated todolist. Opening a project behaves like collapsing
             a task. -->
         <div class="side-menu contrast-container" id="side-menu-0">
-
+            <button class="contrast menu-item" onclick="addProject()">
+                 New Project
+             </button>
         </div>
-        <div class="content row" id="main-content">
+        <ul class="content row" id="main-content">
 
-        </div>
+        </ul>
     </body>
 </html>
