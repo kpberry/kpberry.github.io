@@ -1,11 +1,11 @@
-var taskButton = function(text, id, parent, priority) {
-    this.id = id;
+var taskButton = function(text, parent, priority) {
+    this.text = text;
     this.parent = parent;
     this.priority = priority || 1;
-    this.surface = $('<ul id=' + id + ' class="surface"></ul>');
-    this.surface.attr('id', this.id);
+    this.surface = $('<ul class="surface"></ul>');
     //used by the half remove method to promote child entries
     this.childTasks = [];
+    state[parent][this] = {text: this.text, priority: this.priority};
 
     //Container for all of the content of this list element
     this.container = $('<li class="task col-40"></li>');
@@ -25,32 +25,29 @@ var taskButton = function(text, id, parent, priority) {
         }
     });
 
-    //Container for the text portion of this list element
-    //TODO Maybe this should be a button as well and there should only be
-    //one container?
-    this.textContainer = $('<div class="full-height col-20"></div>');
+    this.checkbox = $('<button class="full-height left"> &#9744 </button>');
+    this.checkbox.click(() => { this.toggleComplete() });
+    this.checkbox.appendTo(this.container);
+
+    this.collapser = $('<button class="full-height left invisible"> &#65293 </button>');
+    this.collapser.click(() => { this.toggleCollapse() });
+    this.collapser.appendTo(this.container);
+
+    this.textContainer = $('<div class="task-text"></div>');
     this.textContainer.appendTo(this.container);
     this.titleText = $('<button class="task-text">' + text + '</button>');
     this.titleText.appendTo(this.textContainer);
-
-    this.checkbox = this.makeButton("Priority: " + this.priority, () => { this.toggleComplete() });
-    this.prioritySetter = this.makeButton("Set Priority", () => { this.setPriority() });
-    this.addDropdown(this.checkbox, [this.prioritySetter], this.container);
 
     //Container for the primary button portion of this list element
     this.buttonContainer = $('<div class="invisible full-height">');
     this.buttonContainer.appendTo(this.container);
 
-
+    var head = this.makeButton("&middot&middot&middot");
     var nextAdder = this.makeButton("Add Next", () => { this.addNext() });
     var childAdder = this.makeButton("Add Child", () => { this.addChild() });
-    this.addDropdown(nextAdder, [childAdder]);
-
-    var remover = this.makeButton("Remove", () => { this.remove() });
-    var fullRemover = this.makeButton("Full Remove", () => { this.removeFull() });
-    this.addDropdown(remover, [fullRemover]);
-
-    this.collapser = this.addButton("Collapse", () => { this.collapse() });
+    var remover = this.makeButton("Remove", () => { this.removeFull() });
+    var prioritySetter = this.makeButton("Set Priority", () => { this.setPriority() });
+    this.addDropdown(head, [nextAdder, childAdder, prioritySetter, remover]);
 
     this.container.click((event) => {
         this.makeEntry();
@@ -71,7 +68,7 @@ taskButton.prototype.addButton = function(text, fn) {
 }
 
 taskButton.prototype.addDropdown = function(head, buttons, destination) {
-    var dropdownContainer = $('<div class="col-5 dropdown full-height">');
+    var dropdownContainer = $('<div class="dropdown full-height">');
     dropdownContainer.appendTo(destination || this.buttonContainer);
 
     head.appendTo(dropdownContainer);
@@ -84,35 +81,37 @@ taskButton.prototype.addDropdown = function(head, buttons, destination) {
     return dropdownContainer;
 }
 
-taskButton.prototype.makeEntry = function(heldKeys) {
-    var self = this;
-    if (self.textContainer.is(":hover")
-        && !self.container.hasClass("full-selected")) {
-        self.container.addClass("full-selected");
-        var placeholder = self.titleText.text();
-        self.titleText.remove();
-        var inp = $('<input type="text" id="cur-input" class="task-text">');
-        inp.appendTo(self.textContainer);
-        inp.attr("placeholder", placeholder);
-        inp.focus();
+taskButton.prototype.makeEntry = function(override, heldKeys) {
+    selectedTask.deselect();
+    selectedTask = this;
+    if (this.inp === undefined && (override || this.textContainer.is(":hover")
+        && !this.container.hasClass("full-selected"))) {
+        this.container.addClass("full-selected");
+        var placeholder = this.titleText.text();
+        this.titleText.remove();
+        this.inp = $('<input type="text" id="cur-input" class="task-text">');
+        this.inp.appendTo(this.textContainer);
+        this.inp.attr("placeholder", placeholder);
+        this.inp.focus();
         var localKeys = heldKeys || [];
-        inp.keydown(function(e) {
+        this.inp.keydown(function(e) {
             localKeys[e.keyCode] = e.type == 'keydown';
         });
-        inp.keyup(function(e) {
+        this.inp.keyup((e) => {
             if(localKeys[9] || localKeys[13]
                 || localKeys[38] || localKeys[40]) {
-                self.titleText = $('<button class="task-text">' + inp.val() + '</button>');
-                self.titleText.appendTo(self.textContainer);
-                self.container.removeClass("full-selected");
+                this.titleText = $('<button class="task-text">' + this.inp.val() + '</button>');
+                this.titleText.appendTo(this.textContainer);
+                this.container.removeClass("full-selected");
                 $('#cur-input').remove();
+                this.inp = undefined;
             }
 
             /*
             if (localKeys[16] && localKeys[9] || localKeys[38]) {
-                $(self).prev().makeEntry(localKeys);
+                $(this).prev().makeEntry(true, localKeys);
             } else if (localKeys[9] || localKeys[40]) {
-                $(self).next().makeEntry(localKeys);
+                $(this).next().makeEntry(true, localKeys);
             }
             */
 
@@ -121,21 +120,36 @@ taskButton.prototype.makeEntry = function(heldKeys) {
     }
 }
 
+taskButton.prototype.deselect = function() {
+    this.container.removeClass("full-selected");
+    if (this.inp !== undefined) {
+        if (this.inp.val() !== "") {
+            this.titleText = $('<button class="task-text">' + this.inp.val() + '</button>');
+        } else {
+            this.titleText = $('<button class="task-text">' + this.titleText.text() + '</button>');
+        }
+        this.titleText.appendTo(this.textContainer);
+        this.container.removeClass("full-selected");
+        $('#cur-input').remove();
+        this.inp = undefined;
+    }
+}
+
 taskButton.prototype.toggleComplete = function() {
     this.surface.toggleClass("complete");
     if (this.isComplete()) {
-        this.checkbox.html("&#9989");
+        this.checkbox.html("&#9745");
         this.buttonContainer.hide();
         this.container.removeClass("half-selected");
     } else {
-        this.checkbox.html("Priority: " + this.priority);
+        this.checkbox.html("&#9744");
         this.buttonContainer.show();
         this.container.addClass("half-selected");
     }
 }
 
 taskButton.prototype.isComplete = function() {
-    if (this.parent === undefined) {
+    if (this.parent instanceof project) {
         return this.surface.hasClass("complete");
     } else {
         return this.surface.hasClass("complete") || this.parent.isComplete();
@@ -143,21 +157,35 @@ taskButton.prototype.isComplete = function() {
 }
 
 taskButton.prototype.addChild = function() {
-    var b = new taskButton("Enter a new task", undefined, this);
+    var b = new taskButton("Enter a new task", this);
     b.surface.appendTo(this.surface);
+    b.makeEntry(true);
     this.childTasks.push(b);
+    this.collapser.removeClass("invisible");
 }
 
 taskButton.prototype.addNext = function() {
-    var b = new taskButton("Enter a new task", undefined, this.parent);
+    var b = new taskButton("Enter a new task", this.parent);
     b.surface.insertAfter(this.surface);
-    if (this.parent != undefined) {
-        this.parent.childTasks.push(b);
-    }
+    b.makeEntry(true);
+    this.parent.childTasks.push(b);
 }
 
 taskButton.prototype.removeFull = function() {
     $(this.surface).remove();
+    this.parent.removeChild(this);
+}
+
+taskButton.prototype.removeChild = function(child) {
+    for (var i = 0; i < this.childTasks.length; i++) {
+        if (this.childTasks[i] === child) {
+            this.childTasks.splice(i, 1);
+            if (this.childTasks.length == 0) {
+                this.collapser.addClass("invisible");
+            }
+            return;
+        }
+    }
 }
 
 //removes this taskButton and promotes its children
@@ -179,14 +207,23 @@ taskButton.prototype.toggleVisibility = function() {
     }
 }
 
+taskButton.prototype.toggleCollapse = function() {
+    if (this.childTasks.length > 0) {
+        if (this.container.hasClass("collapsed")) {
+            this.expand();
+        } else {
+            this.collapse();
+        }
+    }
+}
+
 taskButton.prototype.collapse = function() {
     if (this.childTasks.length > 0) {
         for (i = 0; i < this.childTasks.length; i++) {
             this.childTasks[i].surface.addClass("invisible");
         }
         this.container.addClass("collapsed");
-        this.collapser.text("Expand");
-        this.collapser.click(() => { this.expand() });
+        this.collapser.html("+");
     }
 }
 
@@ -196,14 +233,12 @@ taskButton.prototype.expand = function() {
             this.childTasks[i].surface.removeClass("invisible");
         }
         this.container.removeClass("collapsed");
-        this.collapser.text("Collapse");
-        this.collapser.click(() => { this.collapse() });
+        this.collapser.html("&#65293");
     }
 }
 
 taskButton.prototype.setPriority = function() {
     this.priority = prompt("Enter a new priority.");
-    this.checkbox.text("Priority: " + this.priority);
 }
 
 taskButton.prototype.isCollapsed = function() {

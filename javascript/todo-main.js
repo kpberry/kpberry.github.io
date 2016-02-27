@@ -1,7 +1,9 @@
+var state = {};
+var selectedTask = undefined;
+
 $(function() {
     $(document).click(() => {
-        $(".full-selected").removeClass("half-selected");
-        $(".full-selected").removeClass("full-selected");
+        selectedTask.deselect();
     });
     addProject("Main");
 });
@@ -26,16 +28,21 @@ var addProject = function(title) {
     var main = $('#main-content');
     var text = title || prompt("Enter a project title.");
     if (text != undefined) {
-        var head = $('<div class="project-container">');
-        var txt = $('<h4 class="project-header">' + text + '</h4>');
-        txt.appendTo(head);
-        head.appendTo(main);
-        var tb = new taskButton("New Item   ", 'side-menu-0');
-        tb.surface.appendTo(head);
-        var newProj = new projectHead(text, head);
+        var newProj = new project(text, newProj);
+        var tb = new taskButton("New Item   ", newProj);
+        selectedTask = tb;
+        tb.surface.appendTo(newProj.surface);
+        newProj.surface.appendTo(main);
+    }
+    if (menu.hasClass('open')) {
+        toggleMenu();
     }
 }
 
 var load = function() {
-    
+
+}
+
+var save = function() {
+    alert(JSON.stringify(state));
 }

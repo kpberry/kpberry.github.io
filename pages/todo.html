@@ -7,7 +7,7 @@
         <script src="../javascript/task-button.js" type="text/javascript"></script>
         <script src="../javascript/todo-main.js" type="text/javascript"></script>
         <script src="../javascript/nested-linked-list.js" type="text/javascript"></script>
-        <script src="../javascript/project-head.js" type="text/javascript"></script>
+        <script src="../javascript/project.js" type="text/javascript"></script>
         <link rel="stylesheet" type="text/css" href="../css/grid.css"/>
         <link rel="stylesheet" type="text/css" href="../css/menu-styles.css"/>
         <link rel="stylesheet" type="text/css" href="../css/todo-styles.css"/>
@@ -21,8 +21,9 @@
             <a class="contrast menu-item" href="../index.html"> Home </a>
             <a class="contrast menu-item" href="#" onclick="toggleMenu()"> Menu </a>
             <button class="contrast menu-item" onclick="load()"> Load </button>
+            <button class="contrast menu-item" onclick="save()"> Save </button>
         </nav>
-        <!-- TODO add project-head class to keep track of separate projects;
+        <!-- TODO add project class to keep track of separate projects;
             has no body (behaves like a surface) but stores a pointer to the
             associated todolist. Opening a project behaves like collapsing
             a task. -->
@@ -30,7 +31,7 @@
             <button class="contrast menu-item" onclick="addProject()">
                  New Project
              </button>
-        </div>]
+        </div>
         <main class="content row" id="main-content" role="main">
 
         </main>
