@@ -12,13 +12,13 @@ var toggleMenu = function() {
     var menu = $('#side-menu-0');
     if (menu.hasClass('open')) {
         //close the menu
-        menu.animate({"left": "-=15em"}, "fast");
-        $('#main-content').animate({"left": "-=15em"}, "fast");
+        menu.animate({"left": "-=15em"}, 100);
+        $('#main-content').animate({"left": "-=15em"}, 100);
         menu.removeClass('open');
     } else {
         //open the menu
-        menu.animate({"left": "+=15em"}, "fast");
-        $('#main-content').animate({"left": "+=15em"}, "fast");
+        menu.animate({"left": "+=15em"}, 100);
+        $('#main-content').animate({"left": "+=15em"}, 100);
         menu.addClass('open');
     }
 }
@@ -29,9 +29,7 @@ var addProject = function(title) {
     var text = title || prompt("Enter a project title.");
     if (text != undefined) {
         var newProj = new project(text, newProj);
-        var tb = new taskButton("New Item   ", newProj);
-        selectedTask = tb;
-        tb.surface.appendTo(newProj.surface);
+        newProj.addChild();
         newProj.surface.appendTo(main);
     }
     if (menu.hasClass('open')) {

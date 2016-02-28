@@ -1,6 +1,9 @@
-var taskButton = function(text, parent, priority) {
+var taskButton = function(text, parent, prev, priority) {
     this.text = text;
     this.parent = parent;
+    this.next = undefined;
+    this.firstChild = undefined;
+    this.prev = prev;
     this.priority = priority || 1;
     this.surface = $('<ul class="surface"></ul>');
     //used by the half remove method to promote child entries
@@ -38,6 +41,8 @@ var taskButton = function(text, parent, priority) {
     this.titleText = $('<button class="task-text">' + text + '</button>');
     this.titleText.appendTo(this.textContainer);
 
+
+
     //Container for the primary button portion of this list element
     this.buttonContainer = $('<div class="invisible full-height">');
     this.buttonContainer.appendTo(this.container);
@@ -50,7 +55,9 @@ var taskButton = function(text, parent, priority) {
     this.addDropdown(head, [nextAdder, childAdder, prioritySetter, remover]);
 
     this.container.click((event) => {
-        this.makeEntry();
+        if (this.textContainer.is(":hover")) {
+            this.makeEntry();
+        }
         event.stopPropagation();
     });
 }
@@ -58,12 +65,6 @@ var taskButton = function(text, parent, priority) {
 taskButton.prototype.makeButton = function(text, fn) {
     var result = $('<button class="full-height">' + text + '</button>');
     result.click(fn);
-    return result;
-}
-
-taskButton.prototype.addButton = function(text, fn) {
-    var result = this.makeButton(text, fn);
-    result.appendTo(this.buttonContainer);
     return result;
 }
 
@@ -81,11 +82,12 @@ taskButton.prototype.addDropdown = function(head, buttons, destination) {
     return dropdownContainer;
 }
 
-taskButton.prototype.makeEntry = function(override, heldKeys) {
-    selectedTask.deselect();
+taskButton.prototype.makeEntry = function(heldKeys) {
+    if (selectedTask !== undefined) {
+        selectedTask.deselect();
+    }
     selectedTask = this;
-    if (this.inp === undefined && (override || this.textContainer.is(":hover")
-        && !this.container.hasClass("full-selected"))) {
+    if (this.inp === undefined) {
         this.container.addClass("full-selected");
         var placeholder = this.titleText.text();
         this.titleText.remove();
@@ -96,32 +98,36 @@ taskButton.prototype.makeEntry = function(override, heldKeys) {
         var localKeys = heldKeys || [];
         this.inp.keydown(function(e) {
             localKeys[e.keyCode] = e.type == 'keydown';
+            if (localKeys[9]) {
+                e.preventDefault();
+            }
         });
         this.inp.keyup((e) => {
             if(localKeys[9] || localKeys[13]
                 || localKeys[38] || localKeys[40]) {
-                this.titleText = $('<button class="task-text">' + this.inp.val() + '</button>');
-                this.titleText.appendTo(this.textContainer);
-                this.container.removeClass("full-selected");
-                $('#cur-input').remove();
-                this.inp = undefined;
+                this.deselect();
             }
 
-            /*
             if (localKeys[16] && localKeys[9] || localKeys[38]) {
-                $(this).prev().makeEntry(true, localKeys);
+                if (this.prev instanceof taskButton) {
+                    this.prev.makeEntry(localKeys);
+                }
             } else if (localKeys[9] || localKeys[40]) {
-                $(this).next().makeEntry(true, localKeys);
+                if (this.inOrderNext() instanceof taskButton) {
+                    this.inOrderNext().makeEntry(localKeys);
+                }
             }
-            */
+
 
             localKeys[e.keyCode] = e.type == 'keydown';
+
         });
     }
 }
 
 taskButton.prototype.deselect = function() {
     this.container.removeClass("full-selected");
+    this.container.removeClass("half-selected");
     if (this.inp !== undefined) {
         if (this.inp.val() !== "") {
             this.titleText = $('<button class="task-text">' + this.inp.val() + '</button>');
@@ -157,23 +163,38 @@ taskButton.prototype.isComplete = function() {
 }
 
 taskButton.prototype.addChild = function() {
-    var b = new taskButton("Enter a new task", this);
+    b = new taskButton("Enter a new task", this);
     b.surface.appendTo(this.surface);
-    b.makeEntry(true);
+    var prev = this;
+    if (this.childTasks.length > 0) {
+        prev = this.childTasks[this.childTasks.length - 1];
+        prev.next = b;
+    } else {
+        this.firstChild = b;
+    }
+    b.prev = prev;
+    b.next = this.next;
+    if (b.next !== undefined) {
+        b.next.prev = b;
+    }
+    b.makeEntry();
     this.childTasks.push(b);
     this.collapser.removeClass("invisible");
 }
 
 taskButton.prototype.addNext = function() {
-    var b = new taskButton("Enter a new task", this.parent);
-    b.surface.insertAfter(this.surface);
-    b.makeEntry(true);
-    this.parent.childTasks.push(b);
+    this.parent.addChild();
 }
 
 taskButton.prototype.removeFull = function() {
     $(this.surface).remove();
     this.parent.removeChild(this);
+    if (this.prev !== undefined) {
+        this.prev.next = this.next;
+        if (this.next !== undefined) {
+            this.next.prev = this.prev;
+        }
+    }
 }
 
 taskButton.prototype.removeChild = function(child) {
@@ -243,4 +264,12 @@ taskButton.prototype.setPriority = function() {
 
 taskButton.prototype.isCollapsed = function() {
     return this.container.hasClass("collapsed");
+}
+
+taskButton.prototype.inOrderNext = function() {
+    if (this.firstChild === undefined) {
+        return this.next;
+    } else {
+        return this.firstChild;
+    }
 }

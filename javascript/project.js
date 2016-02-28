@@ -1,3 +1,5 @@
+//TODO do something like "return new taskButton (but with the special header)"
+
 var project = function(title) {
     this.menuButton = $('<button class="contrast menu-item selected" href="#">'
         + title + '</button>');
@@ -18,8 +20,19 @@ project.prototype.toggleOpen = function() {
     this.menuButton.toggleClass("selected");
 }
 
-project.prototype.addTask = function(task) {
-    this.childTasks.push(task);
+project.prototype.addChild = function(task) {
+    b = task || new taskButton("Enter a new task", this);
+    b.surface.appendTo(this.surface);
+    var prev = this;
+    if (this.childTasks.length > 0) {
+        prev = this.childTasks[this.childTasks.length - 1];
+        prev.next = b;
+    } else {
+        this.firstChild = b;
+    }
+    b.prev = prev;
+    b.makeEntry();
+    this.childTasks.push(b);
 }
 
 project.prototype.isComplete = function() {
