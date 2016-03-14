@@ -9,117 +9,120 @@
     </head>
         <body>
             <nav class="top-menu contrast-container">
-                <a href="index.html" class="contrast menu-item"> Kevin Berry </a>
-                <a href="#lower" class="contrast menu-item"> Go Lower </a>
-                <a href="#higher" class="contrast menu-item"> Go Higher </a>
-                <a href="pages/todo.html" class="contrast menu-item"> Todo List Manager </a>
-                <select class="menu-item">
-                    <option value="A"> A </option>
-                    <option value="B"> B </option>
-                </select>
+                <button href="index.html" class="contrast menu-item"> Kevin Berry </button>
+                <button class="contrast menu-item" onclick="scrollto(this, '#about-me')"> About Me </button>
+                <div class="dropdown full-height">
+                    <button class="full-height contrast" onclick="scrollto(this, '#projects')"> Projects </button>
+                    <div class="full-height dropdown-content">
+                        <button class="full-height contrast menu-item" onclick="scrollto(this, '#physics')"> Physics Engine </button>
+                        <button class="full-height contrast menu-item" onclick="scrollto(this, '#cas')"> Computer Algebra System </button>
+                        <button class="full-height contrast menu-item" onclick="scrollto(this, '#plaidify')"> Plaidify </button>
+                    </div>
+                </div>
+                <div class="right">
+                    <a class="contrast menu-item" href="https://www.github.com/kpberry"> GitHub </a>
+                    <a class="contrast menu-item" href="https://www.facebook.com/kevin.berry.142240"> Facebook </a>
+                </div>
             </nav>
-            <div class="content" class="plain">
-                <p> There is a link hidden in this <a href="#lower" id="higher">set</a> of text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <a href="#higher" id="lower">Some Text</a>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
-                <p> Some text. </p>
+            <div class="plain content">
+                <div id="about-me">
+                    <h1> About Me </h1>
+                    <p>
+                        My name is Kevin Berry, and I'm a sophomore Computer Science
+                        student at Georgia Tech.
+                    </p>
+                    <p>
+                        I am fascinated by the inner workings of programming
+                        languages and algorithms, and I love thinking of the best
+                        ways to make my programs both efficient and robust. I am
+                        proficient in Javascript, HTML, CSS, Java, Python, SQL,
+                        Processing, and Regex, and I am working on learning Haskell
+                        and Lisp to broaden my programming vocabulary. I am
+                        currently developing both a project management system and a
+                        graphing calculator in JavaScript, and I have worked on
+                        projects like matrix manipulators, physics simulations, and
+                        mathematical challenges in the past.
+                    </p>
+                    <p>
+                        Outside of my personal coding, I am a member of The Agency
+                        at Georgia Tech, where I will soon begin working on the
+                        programming of our college's own self driving car. I am also
+                        a member of the Big O Theory club, where I attend problem
+                        solving sessions and lectures on theoretical computer
+                        science. I currently work as the Database Coordinator at the
+                        Institute for Advanced Medical Research in Alpharetta,
+                        Georgia, where I develop and organize software
+                        customizations and extensions to help the clinical research
+                        team capture, understand, and use data more effectively to
+                        help both patients and clinical staff on a daily basis.
+                    </p>
+                    <p>
+                        Within the next year, I hope to begin developing and
+                        understanding artificially intelligent algorithms so that I
+                        can use them in my current projects, in the programming at
+                        my job, and in future projects that I'll create or be a part
+                        of. I want to be able to work on programs that help to make
+                        the lives of others better, and I want to learn as much as I
+                        can about computer science to know that I'm helping to the
+                        fullest extent that I can.
+                    </p>
+                </div>
+                <div id="projects">
+                    <h1> Projects </h1>
+                    <h2 id="physics"> Physics Engine (Processing Python) </h2>
+
+                    <ul>
+	                    <li>Current implementation is a particle based engine that handles forces and interactions at arbitrary distances with O(n^2) runtime efficiency</li>
+	                    <li>Forces can be set up easily based on arbitrary rules by following a Force template</li>
+	                    <li>Includes variable Gravitational, Electrostatic, Spring, Resistive Fluid Forces</li>
+	                    <li>Includes, as an example, the "Love" Force, which increases in magnitude as the square of the displacement between two particles and is, ostensibly, the strongest force of all</li>
+	                    <li>Colors and sizes particles by the force fields they emit and can display the magnitudes of force interactions among all particles</li>
+	                    <li>Capable of high-precision calculations due to a method that reduces the size and increases the frequency of computations</li>
+	                    <li>Simulations obey conservation of energy, mass, and momentum (when there are no external forces)</li>
+	                    <li>Previous version focused on collision detection and could use binary search on ordered pixels to efficiently detect collisions among many arbitrarily shaped objects</li>
+                    </ul>
+
+                    <h2 id="cas"> Computer Algebra System (Python) </h2>
+                    <div class="row">
+                        <div class="column-3">
+                            <ul>
+                            	<li>Evaluates symbolic expressions of arbitrary parameter lengths</li>
+                            	<li>Based on regular expressions and basic arithmetic operators</li>
+                            	<li>Handles Vector and Complex values and their operations</li>
+                            	<li>Evaluates convergent summations, standard and hyperbolic trig functions, and derivatives</li>
+                            	<li>Can multiply, add, etc. algebraic functions and  perform coefficient simplification and combination</li>
+                            	<li>Graphs functions, equations, and parametric equations and provides solutions at points</li>
+                            	<li>Dynamic, context sensitive interface written with TKinter</li>
+                            	<li>Currently working on a much faster version that properly defines fractions and leverages Python's built-in evaluation method and literal code manipulation rather than a user-defined evaluation method</li>
+                            </ul>
+                        </div>
+                        <div class="column-3">
+                            <ul>
+                            	<h3>Examples of Valid Functions</h3>
+                            	<li> -11+2*-3-4-((4/5+5)/6+1/9*6)</li>
+                            	<li>log(10000)log(10000)3</li>
+                            	<li> csc(ln(cos(sin(fact(y)*3))))+2</li>
+                            	<li> acsc(cos(x*sin(x))+1)</li>
+                            	<li> x ^ 1.5 - 5</li>
+                            	<li> 2*x**3+1/(x**2)</li>
+                            	<li>e ^ (j * pi)</li>
+                            	<li> (x+3)(2*x+3)+4(2*x+3)</li>
+                            	<li> j ^ j</li>
+                            	<li> &lt2xsin(y),2,3&gtcross&lt1,2,3&gt(&lt2x,3y&gtdot&lt3x,4y&gt)</li>
+                            	<li> (cos(a)+jsin(b))(cos(a)+jsin(b))</li>
+                            	<li> &lt2x+3,2&gtdot&lt2x+3x,1,2&gtsum(0.3**x,0,(inf))</li>
+                            	<li> &ltnorm(&lt2,3,4&gt)&gtcross&ltnorm(3,4,5)&gt</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h2 id="plaidify"> Plaidify (Processing Java) </h2>
+                    <ul>
+                        <li>Takes a foreground image and a cropped background plaid and produces a plaid interpolation of the two</li>
+                        <li>Uses the grayscale of the original image and a threshold intensity to determine the "plaidness" of a pixel in the final image to ensure the maintenance of edges and clearly defined shapes</li>
+                        <li>Just written for fun, but with good results</li>
+                    </ul>
+                </div>
             </div>
         </body>
 </html>

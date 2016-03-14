@@ -129,13 +129,9 @@ taskButton.prototype.deselect = function() {
     this.container.removeClass("full-selected");
     this.container.removeClass("half-selected");
     if (this.inp !== undefined) {
-        if (this.inp.val() !== "") {
-            this.titleText = $('<button class="task-text">' + this.inp.val() + '</button>');
-        } else {
-            this.titleText = $('<button class="task-text">' + this.titleText.text() + '</button>');
-        }
+        this.text = this.inp.val() || this.text;
+        this.titleText = $('<button class="task-text">' + this.text + '</button>');
         this.titleText.appendTo(this.textContainer);
-        this.container.removeClass("full-selected");
         $('#cur-input').remove();
         this.inp = undefined;
     }
@@ -266,6 +262,7 @@ taskButton.prototype.isCollapsed = function() {
     return this.container.hasClass("collapsed");
 }
 
+//TODO need while loop to get to first NON COLLAPSED follower
 taskButton.prototype.inOrderNext = function() {
     if (this.firstChild === undefined) {
         return this.next;
