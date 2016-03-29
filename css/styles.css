@@ -94,13 +94,14 @@ h3 {
     float: left;
 }
 
-.dropdown button {
+.dropdown button, .dropdown a {
     width: 100%;
     text-align: left;
     position: relative;
     line-height: 1em;
     padding: 0.5em;
 }
+
 
 .dropdown-content {
     display: none;

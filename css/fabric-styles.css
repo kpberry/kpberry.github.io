@@ -1,0 +1,33 @@
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+}
+
+canvas {
+    display: block;
+    position: relative;
+    left: 5%;
+    padding: 0px;
+    background-color: #FFFFFF;
+    border: 1px solid black;
+}
+
+button {
+    width: 9%;
+    background-color: #000000;
+    color: #FFFFFF;
+    border: 1px solid black;
+    border-radius: 0.5em;
+}
+
+button:hover {
+    color: #000000;
+    background-color:  #FFFFFF;
+}
+
+menu {
+    width: 96%;
+    margin: none;
+    padding-left: 5%;
+}
