@@ -1,0 +1,50 @@
+$bg1: #ffffff;
+$bg1-dark: #eeeeee;
+$bg2: #303030;
+$c2: #000000;
+$c2-light: #404040;
+$c3: #4060DD;
+$c4: #60B060;
+
+* {
+  font-family: "Courier New", monospace;
+  color: $c2;
+}
+
+a {
+  color: $c2;
+  text-underline: none;
+  text-decoration: none;
+  padding: 5px;
+  margin: 5px;
+}
+
+a:hover {
+  border-bottom: solid $c3;
+}
+
+ul, ol {
+  border-left: solid $c3;
+  list-style-type: none;
+  padding-left: 2px;
+}
+
+li {
+  margin: 5px;
+  padding-left: 2px;
+  a {
+    padding-bottom: 0;
+  }
+}
+
+div {
+  padding: 0 0 0 5px;
+}
+
+h4 {
+  font-family: "Courier New", monospace;
+}
+
+nav {
+  margin-bottom: 20px;
+}

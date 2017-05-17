@@ -1,0 +1,35 @@
+* {
+  font-family: "Courier New", monospace;
+  color: #000000; }
+
+a {
+  color: #000000;
+  text-underline: none;
+  text-decoration: none;
+  padding: 5px;
+  margin: 5px; }
+
+a:hover {
+  border-bottom: solid #4060DD; }
+
+ul, ol {
+  border-left: solid #4060DD;
+  list-style-type: none;
+  padding-left: 2px; }
+
+li {
+  margin: 5px;
+  padding-left: 2px; }
+  li a {
+    padding-bottom: 0; }
+
+div {
+  padding: 0 0 0 5px; }
+
+h4 {
+  font-family: "Courier New", monospace; }
+
+nav {
+  margin-bottom: 20px; }
+
+/*# sourceMappingURL=main.css.map */
