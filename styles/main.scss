@@ -16,8 +16,8 @@ a {
   color: $c2;
   text-underline: none;
   text-decoration: none;
-  padding: 5px;
-  margin: 5px;
+  padding: 0.5em;
+  margin: 0.5em;
 }
 
 a:hover {
@@ -27,19 +27,19 @@ a:hover {
 ul, ol {
   border-left: solid $c3;
   list-style-type: none;
-  padding-left: 2px;
+  padding-left: 0.3em;
 }
 
 li {
-  margin: 5px;
-  padding-left: 2px;
+  margin: 0.5em;
+  padding-left: 0.3em;
   a {
     padding-bottom: 0;
   }
 }
 
 div {
-  padding: 0 0 0 5px;
+  padding: 0 0 0 0.5em;
 }
 
 h4 {
@@ -47,5 +47,5 @@ h4 {
 }
 
 nav {
-  margin-bottom: 20px;
+  margin-bottom: 2em;
 }
