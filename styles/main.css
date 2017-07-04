@@ -6,9 +6,7 @@
 a {
   color: #000000;
   text-underline: none;
-  text-decoration: none;
-  padding: 0.5em;
-  margin: 0.5em; }
+  text-decoration: none; }
 
 a:hover {
   border-bottom: solid #4060DD; }
