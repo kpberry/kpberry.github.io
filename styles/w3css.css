@@ -189,7 +189,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .w3-text-cyan{color:#00bcd4!important}
 .w3-text-blue-grey,.w3-text-blue-gray{color:#607d8b!important}
 .w3-text-light-green{color:#8bc34a!important}
-.w3-text-indigo{color:#3f51b5!important}
+.w3-text-indigo,.w3-hover-text-indigo:hover{color:#3f51b5!important}
 .w3-text-khaki{color:#b4aa50!important}
 .w3-text-lime{color:#cddc39!important}
 .w3-text-orange{color:#ff9800!important}
