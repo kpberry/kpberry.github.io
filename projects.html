@@ -1,6 +1,45 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="styles/w3css.css"/>
+    <script>
+        var toggle_accordion = function (id) {
+            var outer = document.getElementById(id);
+            var inner = document.getElementById(id + "_inner");
+            if (inner.className.indexOf("w3-show") === -1) {
+                inner.className += " w3-show";
+                outer.className += " w3-card-2 w3-margin-bottom";
+            } else {
+                inner.className = inner.className.replace(" w3-show", "");
+                outer.className = outer.className.replace(" w3-card-2", "");
+                outer.className = outer.className.replace(" w3-margin-bottom", "");
+            }
+        };
+
+        var slideShowIndices = {};
+        var cycle = function(className, offset) {
+            var items = document.getElementsByClassName(className);
+            var index = offset;
+            if (slideShowIndices.hasOwnProperty(className)) {
+                index = slideShowIndices[className] + offset;
+            }
+            if (index < 0) {
+                index += items.length;
+            }
+            if (index >= items.length) {
+                index -= items.length;
+            }
+            slideShowIndices[className] = index;
+            for (var i = 0; i < items.length; i++) {
+                items[i].style.display = "none";
+            }
+            items[index].style.display = "block";
+        };
+
+        window.onload = function() {
+            cycle('spiral_img', 0);
+//            cycle('physics_img', 0);
+        };
+    </script>
 </head>
 
 <body>
@@ -12,44 +51,101 @@
             <a href="resume.html" class="w3-bar-item w3-button w3-hover-white">Resume</a>
         </nav>
 
-        <div id="projects">
-            <div class="w3-panel">
-                <ul class="w3-ul">
-                    <li><h5 class="w3-text-indigo">Physics Engine</h5></li>
-                    <li>Efficiently calculates forces and interactions at arbitrary distances</li>
+        <div class="w3-panel" id="projects">
+            <div id="spirals">
+                <button onclick="toggle_accordion('spirals')"
+                        class="w3-button w3-block w3-left-align w3-text-indigo w3-border-bottom w3-hover-indigo">
+                    Number Spiral Generator
+                </button>
+                <ul class="w3-ul w3-hide" id="spirals_inner">
+                    <li>Calculates values for and generates square or hexagon tiled visualizations of number
+                        sequences
+                    </li>
+                    <li>Runtime Java compiler allows for the use of arbitrary Java expressions as filter criteria
+                        for
+                        sequence elements
+                    </li>
+                    <li>Tool for creating and combining color schemes allows for the creation at runtime of complex
+                        highlight patterns for generated
+                    </li>
+                    <li>Can efficiently compute elements of various built-in series, such as prime numbers,
+                        hailstone
+                        sequences, and English number name lengths
+                    </li>
+                    <li class="w3-container">
+                        <img src="res/spirals/6.png" width="100%" class="spiral_img"/>
+                        <img src="res/spirals/13.png" width="100%" class="spiral_img"/>
+                        <img src="res/spirals/23.png" width="100%" class="spiral_img"/>
+                        <img src="res/spirals/24.png" width="100%" class="spiral_img"/>
+                        <img src="res/spirals/27.png" width="100%" class="spiral_img"/>
+                        <button class="w3-button w3-indigo w3-left w3-half" onclick="cycle('spiral_img', -1);">&#10094;</button>
+                        <button class="w3-button w3-indigo w3-right w3-half" onclick="cycle('spiral_img', 1);">&#10095;</button>
+                    </li>
+                </ul>
+            </div>
+            <div id="physics">
+                <button onclick="toggle_accordion('physics')"
+                        class="w3-button w3-block w3-left-align w3-text-indigo w3-border-bottom w3-hover-indigo">
+                    Physics Engine
+                </button>
+                <ul class="w3-ul w3-hide" id="physics_inner">
+                    <li>Efficiently calculates forces and interactions among particles at arbitrary distances</li>
                     <li>Forces can be set up easily based on arbitrary rules by following a Force template</li>
                     <li>Includes variable Gravitational, Electrostatic, Spring, Resistive Fluid Forces</li>
                     <li>Includes, as an example, the "Love" Force, which increases in magnitude as the square of the
                         displacement between two particles and is, ostensibly, the strongest force of all
                     </li>
-                    <li>Colors and sizes particles by the force fields they emit and can display the magnitudes of force
+                    <li>Colors and sizes particles by the force fields they emit and can display the magnitudes of
+                        force
                         interactions among all particles
                     </li>
-                    <li>Capable of high-precision calculations due to a method that reduces the size and increases the
+                    <li>Capable of high-precision calculations due to a method that reduces the size and increases
+                        the
                         frequency of computations
                     </li>
                     <li>Simulations obey conservation of energy, mass, and momentum (when there are no external
                         forces)
                     </li>
+                    <!--<li class="w3-container w3-center">-->
+                        <!--<img src="res/physics/0024.png" width="1024" class="physics_img"/>-->
+                        <!--<img src="res/physics/0051.png" width="1024" class="physics_img"/>-->
+                        <!--<img src="res/physics/0243.png" width="1024" class="physics_img"/>-->
+                        <!--<img src="res/physics/0266.png" width="1024" class="physics_img"/>-->
+                        <!--<img src="res/physics/0367.png" width="1024" class="physics_img"/>-->
+                        <!--<img src="res/physics/0388.png" width="1024" class="physics_img"/>-->
+                        <!--<img src="res/physics/0412.png" width="1024" class="physics_img"/>-->
+                        <!--<img src="res/physics/0415.png" width="1024" class="physics_img"/>-->
+                        <!--<img src="res/physics/0591.png" width="1024" class="physics_img"/>-->
+                        <!--<img src="res/physics/0636.png" width="1024" class="physics_img"/>-->
+                        <!--<img src="res/physics/0704.png" width="1024" class="physics_img"/>-->
+                        <!--<button class="w3-button w3-indigo w3-left w3-half" onclick="cycle('physics_img', -1);">&#10094;</button>-->
+                        <!--<button class="w3-button w3-indigo w3-right w3-half" onclick="cycle('physics_img', 1);">&#10095;</button>-->
+                    <!--</li>-->
                 </ul>
             </div>
 
-            <div class="w3-panel">
-                <ul class="w3-ul">
-                    <li><h5 class="w3-text-indigo">Computer Algebra System</h5></li>
+            <div id="cas">
+                <button onclick="toggle_accordion('cas')"
+                        class="w3-button w3-block w3-left-align w3-text-indigo w3-border-bottom w3-hover-indigo">
+                    Computer Algebra System
+                </button>
+                <ul class="w3-ul w3-hide" id="cas_inner">
                     <li>Evaluates symbolic expressions of arbitrary parameter lengths</li>
-                    <li>Based on regular expressions and basic arithmetic operators</li>
-                    <li>Handles Vector and Complex values and their operations</li>
-                    <li>Evaluates convergent summations, standard and hyperbolic trig functions, and derivatives</li>
+                    <li>Handles operations on Vector, Matrix, and Complex values</li>
+                    <li>Evaluates convergent summations, standard and hyperbolic trig functions, and derivatives
+                    </li>
                     <li>Can manipulate algebraic functions and perform term simplification and combination</li>
                     <li>Graphs functions, equations, and parametric equations and provides solutions at points</li>
                     <li>Dynamic, context sensitive interface written with TKinter</li>
                 </ul>
             </div>
 
-            <div class="w3-panel">
-                <ul class="w3-ul">
-                    <li><h5 class="w3-text-indigo"><a href="readability.html">Readability Analyzer</a></h5></li>
+            <div id="readability">
+                <button onclick="toggle_accordion('readability')"
+                        class="w3-button w3-block w3-left-align w3-text-indigo w3-border-bottom w3-hover-indigo">
+                    Readability Analyzer
+                </button>
+                <ul class="w3-ul w3-hide" id="readability_inner">
                     <li>Counts text features including sentences, characters, and syllables</li>
                     <li>Analyzes text by several metrics, including Flesch-Reading ease, the Gunning Fog Index, and
                         others to produce an average text "grade level"
@@ -57,29 +153,35 @@
                 </ul>
             </div>
 
-            <div class="w3-panel">
-                <ul class="w3-ul">
-                    <li><h5 class="w3-text-indigo"><a href="plaidify.html">Plaidify</a></h5></li>
-                    <li>Takes a foreground image and a cropped background plaid and produces a plaid interpolation of
+            <div id="plaidify">
+                <button onclick="toggle_accordion('plaidify')"
+                        class="w3-button w3-block w3-left-align w3-text-indigo w3-border-bottom w3-hover-indigo">
+                    Plaidify
+                </button>
+                <ul class="w3-ul w3-hide" id="plaidify_inner">
+                    <li>Takes a foreground image and a cropped background plaid and produces a plaid interpolation
+                        of
                         the two
                     </li>
-                    <li>Uses the grayscale of the original image and a threshold intensity to determine the "plaidness"
+                    <li>Uses the grayscale of the original image and a threshold intensity to determine the
+                        "plaidness"
                         of a pixel in the final image to ensure the maintenance of edges and clearly defined shapes
                     </li>
                 </ul>
             </div>
+        </div>
 
-            <div>
-                <footer class="w3-bar w3-indigo">
-                    <div class="w3-bar-item">Contact me via</div>
-                    <a href="mailto:kpberry11@gatech.edu" class="w3-bar-item w3-button w3-hover-white">email</a>
-                    <a href="https://www.linkedin.com/in/kevin-berry-820223141/" target="_blank"
-                       class="w3-bar-item w3-button w3-hover-white">linkedin</a>
-                    <a href="https://github.com/kpberry" target="_blank" class="w3-bar-item w3-button w3-hover-white">github</a>
-                    <a href="https://www.facebook.com/kevin.berry.142240" target="_blank"
-                       class="w3-bar-item w3-button w3-hover-white">facebook</a>
-                </footer>
-            </div>
+        <div>
+            <footer class="w3-bar w3-indigo">
+                <div class="w3-bar-item">Contact me via</div>
+                <a href="mailto:kpberry11@gatech.edu" class="w3-bar-item w3-button w3-hover-white">email</a>
+                <a href="https://www.LinkedIn.com/in/kevin-berry-820223141/" target="_blank"
+                   class="w3-bar-item w3-button w3-hover-white">LinkedIn</a>
+                <a href="https://github.com/kpberry" target="_blank"
+                   class="w3-bar-item w3-button w3-hover-white">github</a>
+                <a href="https://www.facebook.com/kevin.berry.142240" target="_blank"
+                   class="w3-bar-item w3-button w3-hover-white">facebook</a>
+            </footer>
         </div>
     </div>
 </div>
