@@ -1,0 +1,229 @@
+<html>
+<script src="js/three.js"></script>
+<script>
+	window.onload = function() {
+		var canv = document.getElementById('canv');
+		var ctx = canv.getContext('2d');
+
+		var ps = particle_system(ctx, 1);
+
+		for (var p = 0; p < 100; p++) {
+			ps.add_particle(particle(
+			    [Math.random() * 1000, Math.random() * 1000, 1000 + Math.random() * 100],
+				[0, 0, 0], 10000000000, 0.0000001, 0.000001, 1)
+			);
+		}
+
+		setInterval(ps.act, 1000 / 60);
+	};
+
+	function drawPointWithGradient(ctx, x, y, size, color, gradient) {
+        var reflection;
+
+        reflection = size / 4;
+
+        ctx.save();
+        ctx.translate(x, y);
+        var radgrad = ctx.createRadialGradient(-reflection,-reflection,reflection,0,0,size);
+
+        radgrad.addColorStop(0, '#FFFFFF');
+        radgrad.addColorStop(gradient, color);
+        radgrad.addColorStop(1, 'rgba(1,0,98,0)');
+
+        ctx.fillStyle = radgrad;
+        ctx.fillRect(-size,-size,size*2,size*2);
+        ctx.restore();
+    }
+
+	var sphere = function(radius, color) {
+		var points = [];
+		color = color || 'red';
+		radius = radius || 20;
+		var num_vertices = 0;
+
+		for (var phi = -1.445; phi < 1.445; phi += 0.17) {
+			var r = Math.cos(phi) * radius;
+			var cur_y = Math.sin(phi) * radius;
+
+			for (var theta = 0; theta <= 6.28; theta += 0.17) {
+				points[num_vertices++] = {x: Math.cos(theta) * radius, y: cur_y, z: Math.sin(theta) * radius};
+			}
+		}
+	};
+
+	var G = 6.673e-11;
+	var k = 8.99e9;
+	var C = 1;
+
+	//focal length of the human eye is 17cm
+	var focal_length = 170;
+
+	var particle = function(pos, vel, mass, charge, charm, trail) {
+		var self = {};
+		vel = vel || [0, 0, 0];
+		mass = mass || 1;
+		charge = charge || 0;
+		charm = charm || 0;
+		var lines = [];
+		trail = trail || 0;
+		var temp_pos = pos;
+
+		var external_fields = [];
+		var internal_fields = [
+			gravitational_field(mass, pos),
+			electric_field(charge, pos),
+			love_field(charm, pos),
+		];
+
+		color = [charge * k, charm * C, charge * -k];
+
+		var add_external_field = function(field) {
+			external_fields.push(field);
+		};
+
+		var add_external_fields = function(fields) {
+			for (var i = 0; i < fields.length; i++) {
+				external_fields.push(fields[i]);
+			}
+		};
+
+		var add_internal_field = function(field) {
+			internal_fields.push(field);
+		};
+
+		var accelerate = function(reduction) {
+			var force = 0;
+			var dist = 0;
+			var cur;
+			for (var i = 0; i < external_fields.length; i++) {
+				cur = external_fields[i];
+				cp = cur.pos;
+				dist = Math.sqrt((pos[0] - cp[0]) * (pos[0] - cp[0]) 
+							   + (pos[1] - cp[1]) * (pos[1] - cp[1]) 
+							   + (pos[2] - cp[2]) * (pos[2] - cp[2]));
+				force = cur.calc_force(mass, charge, charm, vel, pos, dist) / reduction;
+				//acceleration all done in one step
+				vel = [vel[0] + force * (pos[0] - cp[0]) / mass / dist,
+				       vel[1] + force * (pos[1] - cp[1]) / mass / dist, 
+				       vel[2] + force * (pos[2] - cp[2]) / mass / dist];
+			}
+		};
+
+		var move = function(reduction) {
+			reduction = reduction || 1;
+			temp_pos = [pos[0] + vel[0] / reduction, 
+						pos[1] + vel[1] / reduction, 
+						pos[2] + vel[2] / reduction];
+		};
+
+		var display = function(ctx) {
+			if (pos[2] > 1) {
+				drawPointWithGradient(ctx, pos[0], pos[1], focal_length / pos[2] * 100, 'red', 0.8);
+			}
+		};
+
+		var act = function(ctx, reduction) {
+			accelerate(reduction);
+			move(reduction);
+			display(ctx);
+		};
+
+		var update_position = function() {
+			if (lines.length > trail) {
+				lines.shift();
+			}
+			lines.push([temp_pos, pos]);
+			pos = temp_pos;
+			for (var i = 0; i < internal_fields.length; i++) {
+				internal_fields[i].pos = pos;
+			}
+		};
+
+		var get_pos = function() {
+			return pos;
+		};
+
+		return {
+			add_internal_field: add_internal_field,
+			add_external_field: add_external_field,
+			add_external_fields: add_external_fields,
+			internal_fields: internal_fields,
+			external_fields: external_fields,
+			act: act, get_pos: get_pos,
+			update_position: update_position
+		};
+	};
+
+	var gravitational_field = function(mass, pos) {
+		return {
+			pos: pos,
+			calc_force: function(other_mass, charge, charm, vel, pos, dist) {
+				return -G * mass * other_mass / (dist * dist); 
+			}
+		};
+	};
+
+	var electric_field = function(charge, pos) {
+		return {
+			pos: pos,
+			calc_force: function(mass, other_charge, charm, vel, pos, dist) {
+				return k * charge * other_charge / (dist * dist);
+			}
+		};
+	};
+
+	var love_field = function(charm, pos) {
+		return {
+			pos: pos,
+			calc_force: function(mass, charge, other_charm, vel, pos, dist) {
+				return -C * charm * other_charm * dist * dist;
+			}
+		};
+	};
+
+	var fluid_field = function(damping, pos) {
+		return {
+			pos: pos,
+			calc_force: function(mass, charge, charm, vel, pos, dist) {
+				return -damping * Math.sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
+			}
+		}
+	};
+
+	var particle_system = function(ctx, reduction) {
+		var particles = [];
+		var springs = [];
+
+		var add_particle = function(p) {
+			for (var i = 0; i < particles.length; i++) {
+				particles[i].add_external_fields(p.internal_fields);
+				p.add_external_fields(particles[i].internal_fields);
+			}
+			particles.push(p);
+		};
+
+		var act = function() {
+			ctx.clearRect(0, 0, 1000, 1000);
+			for (var i = 0; i < reduction; i++) {
+				for (var p = 0; p < particles.length; p++) {
+					particles[p].act(ctx, reduction);
+				}
+			}
+			for (i = 0; i < particles.length; i++) {
+				particles[i].update_position();
+				var pos = particles[i].get_pos();
+			}
+		};
+
+		return {
+			add_particle: add_particle,
+			act: act
+		};
+	}
+</script>
+<body>
+	<canvas id="canv" width="1000px" height="1000px">
+		Stop using internet explorer, you moron.
+	</canvas>
+</body>
+</html>
