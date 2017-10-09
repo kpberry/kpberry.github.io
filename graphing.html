@@ -1,0 +1,237 @@
+<html>
+<head>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="res/math.js" type="text/javascript"></script>
+    <script>
+        var graph = function (target, fn, xlim, ylim) {
+            var svg = d3.select(target);
+            var x_scale = svg.attr('width') / (xlim[1] - xlim[0]);
+            var y_scale = svg.attr('height') / (ylim[1] - ylim[0]);
+            svg.selectAll('*').remove();
+
+            var _drawDirectionField = function (steps) {
+                drawDirectionField(target, fn, xlim, ylim, steps);
+            };
+
+            var _drawSlopeField = function (steps) {
+                drawSlopeField(target, fn, xlim, ylim, steps);
+            };
+
+            var _drawEulerApprox = function (start, steps, step_size) {
+                drawEulerApprox(target, fn, start, steps, step_size, xlim, ylim);
+            };
+
+            var _drawEulerApproxAtMouse = function (evt) {
+                var e = evt.target;
+                var dim = e.getBoundingClientRect();
+                var x = evt.clientX - dim.left;
+                var y = evt.clientY - dim.top;
+                x = xlim[0] + x / x_scale;
+                y = -(ylim[0] + y / y_scale);
+                console.log(x, y);
+                drawEulerApprox(target, fn, [x, y], 200)
+            };
+
+
+            document.getElementById(target.replace('#', '')).onclick
+                = _drawEulerApproxAtMouse;
+
+            return {
+                drawDirectionField: _drawDirectionField,
+                drawSlopeField: _drawSlopeField,
+                drawEulerApprox: _drawEulerApprox,
+                drawEulerApproxAtMouse: _drawEulerApproxAtMouse
+            };
+        };
+
+        var drawDirectionField = function (target, fn, xlim, ylim, steps) {
+            fn = fn || function () {
+                    return 1;
+                };
+
+            var svg = d3.select(target);
+            svg.attr('transform', 'scale(1, -1)');
+            var width = parseInt(svg.style('width'));
+            var height = parseInt(svg.style('height'));
+
+            steps = steps || 20;
+
+            xlim = [-5, 5] || xlim;
+            ylim = [-5, 5] || ylim;
+
+            var x_step = (xlim[1] - xlim[0]) / steps;
+            var y_step = (ylim[1] - ylim[0]) / steps;
+            var x_scale = width / (xlim[1] - xlim[0]);
+            var y_scale = height / (ylim[1] - ylim[0]);
+
+            var data = [];
+            for (var x = xlim[0]; x <= xlim[1]; x += x_step) {
+                for (var y = ylim[0]; y <= ylim[1]; y += y_step) {
+                    var dy = fn(x, y);
+                    var dx = x_step;
+                    var mag = Math.sqrt(dy * dy + dx * dx);
+                    var udx = dx / mag * width / steps / 3;
+                    var udy = dy / mag * height / steps / 3;
+                    data.push(
+                        [(x - xlim[0]) * x_scale - udx,
+                            (y - ylim[0]) * y_scale - udy,
+                            (x - xlim[0]) * x_scale + udx,
+                            (y - ylim[0]) * y_scale + udy]
+                    );
+                }
+            }
+
+            svg.selectAll('line')
+                .data(data)
+                .enter()
+                .append('line')
+                .attr('x1', function (d) {
+                    return d[0];
+                })
+                .attr('y1', function (d) {
+                    return d[1];
+                })
+                .attr('x2', function (d) {
+                    return d[2];
+                })
+                .attr('y2', function (d) {
+                    return d[3];
+                })
+                .style('stroke', 'black')
+        };
+
+        var drawSlopeField = function (target, fn, xlim, ylim, steps) {
+            fn = fn || function () {
+                    return 1;
+                };
+
+            var svg = d3.select(target);
+            svg.attr('transform', 'scale(1, -1)');
+            var width = parseInt(svg.style('width'));
+            var height = parseInt(svg.style('height'));
+
+            steps = steps || 20;
+
+            xlim = [-5, 5] || xlim;
+            ylim = [-5, 5] || ylim;
+
+            var x_step = (xlim[1] - xlim[0]) / steps;
+            var y_step = (ylim[1] - ylim[0]) / steps;
+            var x_scale = width / (xlim[1] - xlim[0]);
+            var y_scale = height / (ylim[1] - ylim[0]);
+
+            var data = [];
+            for (var x = xlim[0]; x <= xlim[1]; x += x_step) {
+                for (var y = ylim[0]; y <= ylim[1]; y += y_step) {
+                    var dy = fn(x, y);
+                    var dx = x_step;
+                    var mag = Math.sqrt(dy * dy + dx * dx);
+                    data.push(
+                        [(x - xlim[0]) * x_scale - dx,
+                            (y - ylim[0]) * y_scale - dy,
+                            (x - xlim[0]) * x_scale + dx,
+                            (y - ylim[0]) * y_scale + dy]
+                    );
+                }
+            }
+
+            svg.selectAll('line')
+                .data(data)
+                .enter()
+                .append('line')
+                .attr('x1', function (d) {
+                    return d[0];
+                })
+                .attr('y1', function (d) {
+                    return d[1];
+                })
+                .attr('x2', function (d) {
+                    return d[2];
+                })
+                .attr('y2', function (d) {
+                    return d[3];
+                })
+                .style('stroke', 'black')
+        };
+
+        var drawEulerApprox = function (target, fn, start, steps, step_size, xlim, ylim) {
+            fn = fn || function () {
+                    return 1;
+                };
+
+            steps = steps || 50;
+            step_size = step_size || 0.1;
+
+            start = start || [0, 0];
+            var data = [[start[0], start[1], start[0], start[1], 0]];
+
+            var svg = d3.select(target);
+            svg.attr('transform', 'scale(1, -1)');
+            var width = parseInt(svg.style('width'));
+            var height = parseInt(svg.style('height'));
+
+            xlim = [-5, 5] || xlim;
+            ylim = [-5, 5] || ylim;
+
+            var x_scale = width / (xlim[1] - xlim[0]);
+            var y_scale = height / (ylim[1] - ylim[0]);
+
+            for (var i = 0; i < steps; i++) {
+                var cur = data[i];
+                var dy = fn(cur[0], cur[1]) * step_size;
+                data.push([cur[0] + step_size, cur[1] + dy, cur[0], cur[1], dy]);
+            }
+
+            svg.selectAll('eulerapprox' + Math.round(10000 * Math.random()))
+                .data(data)
+                .enter()
+                .append('line')
+                .attr('x1', function (d) {
+                    return (d[0] - xlim[0]) * x_scale;
+                })
+                .attr('y1', function (d) {
+                    return (d[1] - ylim[0]) * y_scale;
+                })
+                .attr('x2', function (d) {
+                    return (d[2] - xlim[0]) * x_scale;
+                })
+                .attr('y2', function (d) {
+                    return (d[3] - ylim[0]) * y_scale;
+                })
+                .style('stroke', function (d) {
+                    return 'rgb(' + Math.round(d[4] / step_size * 255) + ',0,'
+                        + (-Math.round(d[4] / step_size * 255)) + ')';
+                })
+        };
+
+        var resetGraph = function () {
+            var math_fn = math.compile(document.getElementById('fn').value);
+            var g = graph('#chart',
+                function (x, y) {
+                    return math_fn.eval({'x': x, 'y': y});
+                }, [-5, 5], [-5, 5]);
+            g.drawDirectionField();
+        };
+
+        window.onload = function () {
+            document.getElementById('fn').addEventListener('keydown', function(e) {
+                if (e.keyCode === 13) {
+                    resetGraph();
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div>
+    <label for="fn">Function: </label>
+    <input id="fn" type="text" placeholder="(x - y) / (x + y)">
+    <button onclick="resetGraph()">Redraw Graph</button>
+</div>
+<div>
+    <svg width="800" height="800" style="border: solid 1px black" id="chart">
+    </svg>
+</div>
+</svg>
+</body>
+</html>

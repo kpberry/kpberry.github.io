@@ -7,48 +7,14 @@
 
 		var ps = particle_system(ctx, 1);
 
-		for (var p = 0; p < 100; p++) {
+		for (var p = 0; p < 1000; p++) {
 			ps.add_particle(particle(
 			    [Math.random() * 1000, Math.random() * 1000, 1000 + Math.random() * 100],
-				[0, 0, 0], 10000000000, 0.0000001, 0.000001, 1)
+				[0, 0, 0], 1000, (Math.random() - 0.5) * 0.01, 0.01, 1)
 			);
 		}
 
 		setInterval(ps.act, 1000 / 60);
-	};
-
-	function drawPointWithGradient(ctx, x, y, size, color, gradient) {
-        var reflection;
-
-        reflection = size / 4;
-
-        ctx.save();
-        ctx.translate(x, y);
-        var radgrad = ctx.createRadialGradient(-reflection,-reflection,reflection,0,0,size);
-
-        radgrad.addColorStop(0, '#FFFFFF');
-        radgrad.addColorStop(gradient, color);
-        radgrad.addColorStop(1, 'rgba(1,0,98,0)');
-
-        ctx.fillStyle = radgrad;
-        ctx.fillRect(-size,-size,size*2,size*2);
-        ctx.restore();
-    }
-
-	var sphere = function(radius, color) {
-		var points = [];
-		color = color || 'red';
-		radius = radius || 20;
-		var num_vertices = 0;
-
-		for (var phi = -1.445; phi < 1.445; phi += 0.17) {
-			var r = Math.cos(phi) * radius;
-			var cur_y = Math.sin(phi) * radius;
-
-			for (var theta = 0; theta <= 6.28; theta += 0.17) {
-				points[num_vertices++] = {x: Math.cos(theta) * radius, y: cur_y, z: Math.sin(theta) * radius};
-			}
-		}
 	};
 
 	var G = 6.673e-11;
@@ -58,8 +24,7 @@
 	//focal length of the human eye is 17cm
 	var focal_length = 170;
 
-	var particle = function(pos, vel, mass, charge, charm, trail) {
-		var self = {};
+	var particle = function(pos, vel, mass, charge, charm, trail, size) {
 		vel = vel || [0, 0, 0];
 		mass = mass || 1;
 		charge = charge || 0;
@@ -67,15 +32,18 @@
 		var lines = [];
 		trail = trail || 0;
 		var temp_pos = pos;
+		size = size || 10;
 
 		var external_fields = [];
 		var internal_fields = [
 			gravitational_field(mass, pos),
 			electric_field(charge, pos),
-			love_field(charm, pos),
+			love_field(charm, pos)
 		];
 
-		color = [charge * k, charm * C, charge * -k];
+		var color = 'rgb(' + Math.round(charge * k)
+            + ',' + Math.round(charge * C)
+            + ',' + Math.round(charge * -k) + ')';
 
 		var add_external_field = function(field) {
 			external_fields.push(field);
@@ -97,7 +65,7 @@
 			var cur;
 			for (var i = 0; i < external_fields.length; i++) {
 				cur = external_fields[i];
-				cp = cur.pos;
+				var cp = cur.pos;
 				dist = Math.sqrt((pos[0] - cp[0]) * (pos[0] - cp[0]) 
 							   + (pos[1] - cp[1]) * (pos[1] - cp[1]) 
 							   + (pos[2] - cp[2]) * (pos[2] - cp[2]));
@@ -117,8 +85,13 @@
 		};
 
 		var display = function(ctx) {
-			if (pos[2] > 1) {
-				drawPointWithGradient(ctx, pos[0], pos[1], focal_length / pos[2] * 100, 'red', 0.8);
+		    var visual_size = focal_length / pos[2] * size;
+			if (visual_size < 100 && visual_size > 0.5) {
+			    ctx.strokeStyle = color;
+			    ctx.beginPath();
+				ctx.arc(pos[0], pos[1], visual_size, 0, Math.PI * 2);
+				ctx.stroke();
+				ctx.closePath();
 			}
 		};
 
