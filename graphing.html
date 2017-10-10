@@ -12,14 +12,16 @@
     <script>
         var resetGraph = function () {
             var expr_y = document.getElementById('fn_y').value || 'sin(x) + cos(y)';
+            expr_y = expr_y.toLowerCase();
             var math_fn_y = math.compile(expr_y);
-            var fn_y = function (x, y) {
-                return math_fn_y.eval({'x': x, 'y': y});
+            var fn_y = function (x, y, t) {
+                return math_fn_y.eval({'x': x || 0, 'y': y || 0, 't': t || 0});
             };
-            var expr_x = document.getElementById('fn_x').value || '1';
+            var expr_x = document.getElementById('fn_x').value ||  '1';
+            expr_x = expr_x.toLowerCase();
             var math_fn_x = math.compile(expr_x);
-            var fn_x = function(x, y) {
-                return math_fn_x.eval({'x': x, 'y': y});
+            var fn_x = function(x, y, t) {
+                return math_fn_x.eval({'x': x || 0, 'y': y || 0, 't': t || 0});
             };
             var min_x = +document.getElementById('min_x').value;
             var max_x = +document.getElementById('max_x').value;

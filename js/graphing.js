@@ -5,6 +5,7 @@
 var graphing = {};
 
 graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_steps) {
+    //TODO make the functions dy/dt and dx/dt clearer
     fn_y = fn_y || function () {
             return 1;
         };
@@ -120,6 +121,64 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_ste
             });
     };
 
+    var drawComponentPlot = function (start, steps, step) {
+        steps = steps || 500;
+        step = step || 0.1;
+
+        start = start || [0, 0, 0];
+        var data = [[start[0], start[1], start[2], 0, 0]];
+
+        for (var i = 0; i < steps; i++) {
+            var cur = data[i];
+            var t = start[2] + i * step;
+            var dx = fn_x(cur[0], cur[1], t) * step;
+            var dy = fn_y(cur[0], cur[1], t) * step;
+            data.push([cur[0] + dx, cur[1] + dy, dx, dy, t]);
+        }
+
+        svg.selectAll('eulerapprox' + Math.round(10000 * Math.random()))
+            .data(data.slice(1))
+            .enter()
+            .append('line')
+            .attr('x1', function (d, i) {
+                return (i * step + start[2] - xlim[0]) * x_scale;
+            })
+            .attr('y1', function (d, i) {
+                return (data[i][0] - ylim[0]) * y_scale;
+            })
+            .attr('x2', function (d, i) {
+                return ((i + 1) * step + start[2] - xlim[0]) * x_scale;
+            })
+            .attr('y2', function (d) {
+                return (d[0] - ylim[0]) * y_scale;
+            })
+            .style('stroke', function (d) {
+                return 'rgb(' + Math.round(d[3] / step * 255) + ',0,'
+                    + (-Math.round(d[3] / step * 255)) + ')';
+            });
+
+        svg.selectAll('eulerapprox' + Math.round(10000 * Math.random()))
+            .data(data.slice(1))
+            .enter()
+            .append('line')
+            .attr('x1', function (d, i) {
+                return (i * step + start[2] - xlim[0]) * x_scale;
+            })
+            .attr('y1', function (d, i) {
+                return (data[i][1] - ylim[0]) * y_scale;
+            })
+            .attr('x2', function (d, i) {
+                return ((i + 1) * step + start[2] - xlim[0]) * x_scale;
+            })
+            .attr('y2', function (d) {
+                return (d[1] - ylim[0]) * y_scale;
+            })
+            .style('stroke', function (d) {
+                return 'rgb(' + Math.round(d[4] / step * 255) + ',0,'
+                    + (-Math.round(d[4] / step * 255)) + ')';
+            });
+    };
+
     var drawExactFunction = function (start, steps, step, fn) {
         steps = steps || 50;
         step = step || 0.1;
@@ -172,6 +231,7 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_ste
         drawSlopeField: drawSlopeField,
         drawEulerApprox: drawEulerApprox,
         drawExactFunction: drawExactFunction,
+        drawComponentPlot: drawComponentPlot,
         clear: clear
     };
 };
