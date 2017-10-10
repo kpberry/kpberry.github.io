@@ -2,127 +2,14 @@
 <head>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="res/math.js" type="text/javascript"></script>
+    <script src="js/graphing.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="styles/w3css.css"/>
+    <style>
+        input:focus {
+            outline: none;
+        }
+    </style>
     <script>
-        var graph = function (target, fn, xlim, ylim) {
-            fn = fn || function () {
-                    return 1;
-                };
-            var svg = d3.select(target);
-            svg.selectAll('*').remove();
-            svg.attr('transform', 'scale(1, -1)');
-
-            var width = parseInt(svg.style('width'));
-            var height = parseInt(svg.style('height'));
-
-            xlim = xlim || [-5, 5];
-            ylim = ylim || [-5, 5];
-
-            var x_scale = width / (xlim[1] - xlim[0]);
-            var y_scale = height / (ylim[1] - ylim[0]);
-
-            var drawField = function (steps, uniform) {
-                steps = steps || 20;
-
-                var x_step = (xlim[1] - xlim[0]) / steps;
-                var y_step = (ylim[1] - ylim[0]) / steps;
-
-                var data = [];
-                for (var x = xlim[0]; x <= xlim[1]; x += x_step) {
-                    for (var y = ylim[0]; y <= ylim[1]; y += y_step) {
-                        var dy = fn(x, y);
-                        var dx = x_step;
-                        var mag = Math.sqrt(dy * dy + dx * dx);
-                        if (uniform) {
-                            dx = dx / mag * width / steps / 3;
-                            dy = dy / mag * height / steps / 3;
-                        }
-                        data.push([x, y, dx, dy]);
-                    }
-                }
-
-                svg.selectAll('field' + Math.round(10000 * Math.random()))
-                    .data(data)
-                    .enter()
-                    .append('line')
-                    .attr('x1', function (d) {
-                        return (d[0] - xlim[0]) * x_scale - d[2];
-                    }).attr('y1', function (d) {
-                    return (d[1] - ylim[0]) * y_scale - d[3];
-                }).attr('x2', function (d) {
-                    return (d[0] - xlim[0]) * x_scale + d[2];
-                }).attr('y2', function (d) {
-                    return (d[1] - ylim[0]) * y_scale + d[3];
-                })
-                    .style('stroke', 'black')
-            };
-
-            var drawSlopeField = function (steps) {
-                drawField(steps, false);
-            };
-
-            var drawDirectionField = function (steps) {
-                drawField(steps, true);
-            };
-
-            var drawEulerApprox = function (start, steps, step, improved) {
-                steps = steps || 50;
-                step = step || 0.1;
-
-                start = start || [0, 0];
-                var data = [[start[0], start[1], start[0], start[1], 0]];
-
-                for (var i = 0; i < steps; i++) {
-                    var cur = data[i];
-                    var dy;
-                    if (improved) {
-                        var f = fn(cur[0], cur[1]);
-                        dy = (f + fn(cur[0] + f * step, cur[1] + step)) * step / 2;
-                    } else {
-                        dy = fn(cur[0], cur[1]) * step;
-                    }
-                    data.push([cur[0] + step, cur[1] + dy, cur[0], cur[1], dy]);
-                }
-
-                svg.selectAll('eulerapprox' + Math.round(10000 * Math.random()))
-                    .data(data)
-                    .enter()
-                    .append('line')
-                    .attr('x1', function (d) {
-                        return (d[0] - xlim[0]) * x_scale;
-                    })
-                    .attr('y1', function (d) {
-                        return (d[1] - ylim[0]) * y_scale;
-                    })
-                    .attr('x2', function (d) {
-                        return (d[2] - xlim[0]) * x_scale;
-                    })
-                    .attr('y2', function (d) {
-                        return (d[3] - ylim[0]) * y_scale;
-                    })
-                    .style('stroke', function (d) {
-                        return 'rgb(' + Math.round(d[4] / step * 255) + ',0,'
-                            + (-Math.round(d[4] / step * 255)) + ')';
-                    });
-            };
-
-            document.getElementById(target.replace('#', '')).onclick
-                = function (evt) {
-                var e = evt.target;
-                var dim = e.getBoundingClientRect();
-                var x = evt.clientX - dim.left;
-                var y = dim.bottom - evt.clientY;
-                x = xlim[0] + x / x_scale;
-                y = ylim[0] + y / y_scale;
-                drawEulerApprox([x, y], 200, 0.1, true);
-            };
-
-            return {
-                drawDirectionField: drawDirectionField,
-                drawSlopeField: drawSlopeField,
-                drawEulerApprox: drawEulerApprox
-            };
-        };
-
         var resetGraph = function () {
             var expr = document.getElementById('fn').value || 'sin(x) + cos(y)';
             var math_fn = math.compile(expr);
@@ -133,14 +20,20 @@
             var max_x = +document.getElementById('max_x').value;
             var min_y = +document.getElementById('min_y').value;
             var max_y = +document.getElementById('max_y').value;
-            var g = graph('#chart', fn, [min_x, max_x], [min_y, max_y]);
-            var steps = +document.getElementById('field_density').value;
-            g.drawSlopeField(steps);
+            var g = graphing.graph('#chart', fn, [min_x, max_x], [min_y, max_y]);
+            g.clear();
+            var steps = +document.getElementById('steps').value;
+            if (document.getElementById('field_type').value === 'direction') {
+                g.drawDirectionField(steps);
+            } else {
+                g.drawSlopeField(steps);
+            }
             return g;
         };
 
         window.onload = function () {
-            var redrawable = ['fn', 'min_x', 'max_x', 'min_y', 'max_y'];
+            var redrawable = ['fn', 'min_x', 'max_x', 'min_y', 'max_y',
+                'steps'];
             for (var i = 0; i < redrawable.length; i++) {
                 var cur = document.getElementById(redrawable[i]);
                 cur.addEventListener('keydown', function (e) {
@@ -150,34 +43,82 @@
                 });
             }
             resetGraph();
-        }
+        };
     </script>
 </head>
 <body>
-<div>
-    <label for="fn">Function: </label>
-    <input id="fn" type="text" placeholder="sin(x) + cos(y)">
-    <button onclick="resetGraph()">Redraw Graph</button>
+<div class="w3-panel w3-display-topmiddle w3-col l8 m12 s12 w3-mobile">
+    <div class="w3-card-4">
+        <nav class="w3-bar w3-red w3-card-2">
+            <a href="index.html" class="w3-bar-item w3-button w3-hover-white">Home</a>
+            <a href="projects.html"
+               class="w3-bar-item w3-button w3-hover-white">Projects</a>
+            <a href="resume.html" class="w3-bar-item w3-button w3-hover-white">Resume</a>
+        </nav>
+        <div class="w3-panel">
+            <div class="w3-bar">
+                <div class="w3-quarter w3-bar-item">
+                    <label for="fn">dy/dx = </label>
+                </div>
+                <div class="w3-rest">
+                    <input id="fn" type="text" placeholder="sin(x) + cos(y)"
+                           class="w3-input w3-border">
+                </div>
+            </div>
+            <hr>
+            <div class="w3-row-padding">
+                <div class="w3-col m2 s2 l2">
+                    <label for="min_x">Min x</label>
+                    <input id="min_x" type="number" placeholder="-5" value="-5"
+                           class="w3-input w3-border">
+                </div>
+                <div class="w3-col m2 s2 l2">
+                    <label for="max_x">Max x</label>
+                    <input id="max_x" type="number" placeholder="5" value="5"
+                           class="w3-input w3-border">
+                </div>
+                <div class="w3-col m2 s2 l2">
+                    <label for="min_y">Min y</label>
+                    <input id="min_y" type="number" placeholder="-5" value="-5"
+                           class="w3-input w3-border">
+                </div>
+                <div class="w3-col m2 s2 l2">
+                    <label for="max_y">Max y</label>
+                    <input id="max_y" type="number" placeholder="5" value="5"
+                           class="w3-input w3-border">
+                </div>
+                <div class="w3-col m2 s2 l2">
+                    <label for="steps">Steps</label>
+                    <input id="steps" type="number" placeholder="40"
+                           value="40" class="w3-input w3-border">
+                </div>
+                <div class="w3-rest">
+                    <label for="field_type">Field Type</label>
+                    <select id="field_type" class="w3-select">
+                        <option value="slope" onselect="resetGraph()">Slope
+                            Field
+                        </option>
+                        <option value="direction">
+                            Direction Field
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <hr>
+            <div class="w3-center">
+                <button onclick="resetGraph()"
+                        class="w3-button w3-center w3-block w3-red w3-hover-white">
+                    Redraw Graph
+                </button>
+            </div>
+        </div>
+        <div class="w3-center w3-container w3-padding-large">
+            <svg width="800" height="800" style="border: solid 1px black"
+                 id="chart">
+            </svg>
+        </div>
+    </div>
 </div>
-<div>
-    <label for="min_x">Min x</label>
-    <input id="min_x" type="number" placeholder="-5" value="-5">
-    <label for="max_x">Max x</label>
-    <input id="max_x" type="number" placeholder="5" value="5">
-</div>
-<div>
-    <label for="min_y">Min y</label>
-    <input id="min_y" type="number" placeholder="-5" value="-5">
-    <label for="max_y">Max y</label>
-    <input id="max_y" type="number" placeholder="5" value="5">
-</div>
-<div>
-    <label for="field_density">Field Density</label>
-    <input id="field_density" type="number" placeholder="40" value="40">
-</div>
-<div>
-    <svg width="800" height="800" style="border: solid 1px black" id="chart">
-    </svg>
-</div>
+
 </body>
 </html>
