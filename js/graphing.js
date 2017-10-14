@@ -4,8 +4,7 @@
 
 var graphing = {};
 
-graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_steps) {
-    //TODO make the functions dy/dt and dx/dt clearer
+graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
     fn_y = fn_y || function () {
             return 1;
         };
@@ -17,9 +16,6 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_ste
 
     var width = parseInt(svg.style('width'));
     var height = parseInt(svg.style('height'));
-
-    euler_step = euler_step || 0.01;
-    euler_steps = euler_steps || 200;
 
     xlim = xlim || [-5, 5];
     ylim = ylim || [-5, 5];
@@ -38,35 +34,42 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_ste
         var y_step = (ylim[1] - ylim[0]) / steps;
 
         var data = [];
-        var x_norm = width / steps / 3;
-        var y_norm = height / steps / 3;
         var t_step = Math.sqrt(x_step * x_step + y_step * y_step);
         for (var x = xlim[0]; x <= xlim[1]; x += x_step) {
             for (var y = ylim[0]; y <= ylim[1]; y += y_step) {
-                var dx = fn_x(x, y) * t_step * x_norm;
-                var dy = fn_y(x, y) * t_step * y_norm;
+                var dx = fn_x(x, y);
+                var dy = fn_y(x, y);
                 if (uniform) {
                     var mag = Math.sqrt(dy * dy + dx * dx);
-                    dx = dx / mag * width / steps / 3;
-                    dy = dy / mag * height / steps / 3;
+                    dx = dx / mag;
+                    dy = dy / mag;
                 }
-                data.push([x, y, dx, dy]);
+                data.push([x, y, dx * t_step / 4, dy * t_step / 4]);
             }
         }
 
+        x1_fn = function (d) {
+            return (d[0] - xlim[0] - d[2]) * x_scale
+        };
+        y1_fn = function (d) {
+            return (d[1] - ylim[0] - d[3]) * y_scale;
+        };
+        x2_fn = function (d) {
+            return (d[0] - xlim[0] + d[2]) * x_scale;
+        };
+        y2_fn = function (d) {
+            return (d[1] - ylim[0] + d[3]) * y_scale;
+        };
+        //TODO make this draw with arrows
         svg.selectAll('field' + Math.round(10000 * Math.random()))
             .data(data)
             .enter()
             .append('line')
-            .attr('x1', function (d) {
-                return (d[0] - xlim[0]) * x_scale - d[2];
-            }).attr('y1', function (d) {
-            return (d[1] - ylim[0]) * y_scale - d[3];
-        }).attr('x2', function (d) {
-            return (d[0] - xlim[0]) * x_scale + d[2];
-        }).attr('y2', function (d) {
-            return (d[1] - ylim[0]) * y_scale + d[3];
-        }).style('stroke', 'black')
+            .attr('x1', x1_fn)
+            .attr('y1', y1_fn)
+            .attr('x2', x2_fn)
+            .attr('y2', y2_fn)
+            .style('stroke', 'black');
     };
 
     var drawSlopeField = function (steps) {
@@ -87,7 +90,7 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_ste
         for (var i = 0; i < steps; i++) {
             var cur = data[i];
             var dx, dy;
-            if (improved) {
+            if (improved && !improved) {
                 var fy = fn_y(cur[0], cur[1]);
                 var fx = fn_x(cur[0], cur[1]);
                 dx = (fx + fn_x(cur[0] + fx * step, cur[1] + step)) * step / 2;
@@ -153,8 +156,8 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_ste
                 return (d[0] - ylim[0]) * y_scale;
             })
             .style('stroke', function (d) {
-                return 'rgb(' + Math.round(d[3] / step * 255) + ',0,'
-                    + (-Math.round(d[3] / step * 255)) + ')';
+                return 'rgb(' + Math.round(d[2] / step * 255) + ',0,'
+                    + (-Math.round(d[2] / step * 255)) + ')';
             });
 
         svg.selectAll('eulerapprox' + Math.round(10000 * Math.random()))
@@ -174,8 +177,8 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_ste
                 return (d[1] - ylim[0]) * y_scale;
             })
             .style('stroke', function (d) {
-                return 'rgb(' + Math.round(d[4] / step * 255) + ',0,'
-                    + (-Math.round(d[4] / step * 255)) + ')';
+                return 'rgb(' + Math.round(d[3] / step * 255) + ',0,'
+                    + (-Math.round(d[3] / step * 255)) + ')';
             });
     };
 
@@ -189,7 +192,6 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_ste
         for (var i = 0; i < steps; i++) {
             var cur = data[i];
             var y = fn(cur[0] + step);
-            console.log(y);
             data.push([cur[0] + step, y, cur[0], cur[1], y - cur[1]]);
         }
 
@@ -215,23 +217,24 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim, euler_step, euler_ste
             });
     };
 
-    document.getElementById(target.replace('#', '')).onclick
-        = function (evt) {
-        var e = evt.target;
-        var dim = e.getBoundingClientRect();
-        var x = evt.clientX - dim.left;
-        var y = dim.bottom - evt.clientY;
-        x = xlim[0] + x / x_scale;
-        y = ylim[0] + y / y_scale;
-        drawEulerApprox([x, y], euler_steps, euler_step, true);
-    };
-
     return {
         drawDirectionField: drawDirectionField,
         drawSlopeField: drawSlopeField,
         drawEulerApprox: drawEulerApprox,
         drawExactFunction: drawExactFunction,
         drawComponentPlot: drawComponentPlot,
-        clear: clear
+        clear: clear,
+        get_xlim: function () {
+            return xlim;
+        },
+        get_ylim: function () {
+            return ylim;
+        },
+        get_x_scale: function () {
+            return x_scale;
+        },
+        get_y_scale: function () {
+            return y_scale;
+        }
     };
 };
