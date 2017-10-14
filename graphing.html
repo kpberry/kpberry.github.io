@@ -94,8 +94,8 @@
             var chart = document.getElementById('chart');
             if (graph_type.indexOf('field') >= 0) {
                 chart.onclick = function (evt) {
-                    g.drawEulerApprox(mousePosToXY(g, evt),
-                        euler_steps, euler_step, true);
+                    g.drawApproxFunction(mousePosToXY(g, evt),
+                        euler_steps, euler_step, 'runge-kutta');
                 };
                 chart.onmousemove = getMouseCoordDisplayer(g);
             } else {
@@ -121,8 +121,8 @@
             return [x, y];
         };
 
-        var getMouseCoordDisplayer = function(g) {
-            return function(evt) {
+        var getMouseCoordDisplayer = function (g) {
+            return function (evt) {
                 var xy = mousePosToXY(g, evt);
                 var mouse_coord = document.getElementById('mouse_coord');
                 mouse_coord.style.left = (evt.clientX + 3) + 'px';

@@ -37,7 +37,7 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
     var plotLines = function (lines, color_fn) {
         color_fn = color_fn || 'black';
         var x1_fn = function (d) {
-            return (d['x1'] - xlim[0]) * x_scale
+            return (d['x1'] - xlim[0]) * x_scale;
         };
         var y1_fn = function (d) {
             return (d['y1'] - ylim[0]) * y_scale;
@@ -97,7 +97,7 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
         drawField(steps, true);
     };
 
-    var drawEulerApprox = function (start, steps, step, improved) {
+    var drawApproxFunction = function (start, steps, step, method, color_fn) {
         steps = steps || 50;
         step = step || 0.1;
 
@@ -113,19 +113,34 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
             var dx, dy;
             var x = data[i]['x2'];
             var y = data[i]['y2'];
-            if (improved && !improved) {
-                var fy = fn_y(x, y);
-                var fx = fn_x(x, y);
-                dx = (fx + fn_x(x + fx * step, y + step)) * step / 2;
-                dy = (fy + fn_y(x + fy * step, y + step)) * step / 2;
-            } else {
+
+            if (method === 'euler') {
                 dx = fn_x(x, y) * step;
                 dy = fn_y(x, y) * step;
+            } else if (method === 'improved') {
+                var fx = fn_x(x, y);
+                dx = (fx + fn_x(x + fx * step, y + step)) * step / 2;
+                var fy = fn_y(x, y);
+                dy = (fy + fn_y(x + fy * step, y + step)) * step / 2;
+            } else {
+                var k1 = fn_x(x, y);
+                var k2 = fn_x(x + 0.5 * step, y + 0.5 * step * k1);
+                var k3 = fn_x(x + 0.5 * step, y + 0.5 * step * k2);
+                var k4 = fn_x(x + step, y + step * k3);
+
+                dx = step * (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+
+                k1 = fn_y(x, y);
+                k2 = fn_y(x + 0.5 * step, y + 0.5 * step * k1);
+                k3 = fn_y(x + 0.5 * step, y + 0.5 * step * k2);
+                k4 = fn_y(x + step, y + step * k3);
+
+                dy = step * (k1 + 2 * k2 + 2 * k3 + k4) / 6;
             }
             data.push({'x1': x, 'y1': y, 'x2': x + dx, 'y2': y + dy});
         }
 
-        plotLines(data, getSlopeColorFn(step));
+        plotLines(data, color_fn || getSlopeColorFn(step));
     };
 
     var drawComponentPlot = function (start, steps, step) {
@@ -133,7 +148,6 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
         step = step || 0.1;
 
         start = start || [0, 0, 0];
-        console.log(start);
         var t0 = start[2];
         var data1 = [{'x1': t0, 'x2': t0, 'y1': start[0], 'y2': start[0]}];
         var data2 = [{'x1': t0, 'x2': t0, 'y1': start[1], 'y2': start[1]}];
@@ -178,7 +192,7 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
     return {
         drawDirectionField: drawDirectionField,
         drawSlopeField: drawSlopeField,
-        drawEulerApprox: drawEulerApprox,
+        drawApproxFunction: drawApproxFunction,
         drawExactFunction: drawExactFunction,
         drawComponentPlot: drawComponentPlot,
         clear: clear,
