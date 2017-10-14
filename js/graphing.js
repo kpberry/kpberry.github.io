@@ -27,6 +27,40 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
         svg.selectAll('*').remove();
     };
 
+    var getSlopeColorFn = function (step) {
+        return function (d) {
+            var c = Math.round((d['y2'] - d['y1']) * 255 / step);
+            return 'rgb(' + c + ',0,' + (-c) + ')';
+        }
+    };
+
+    var plotLines = function (lines, color_fn) {
+        color_fn = color_fn || 'black';
+        var x1_fn = function (d) {
+            return (d['x1'] - xlim[0]) * x_scale
+        };
+        var y1_fn = function (d) {
+            return (d['y1'] - ylim[0]) * y_scale;
+        };
+        var x2_fn = function (d) {
+            return (d['x2'] - xlim[0]) * x_scale;
+        };
+        var y2_fn = function (d) {
+            return (d['y2'] - ylim[0]) * y_scale;
+        };
+
+        //TODO make this work with arrows
+        svg.selectAll('chart' + Math.round(100000 * Math.random()))
+            .data(lines)
+            .enter()
+            .append('line')
+            .attr('x1', x1_fn)
+            .attr('y1', y1_fn)
+            .attr('x2', x2_fn)
+            .attr('y2', y2_fn)
+            .style('stroke', color_fn);
+    };
+
     var drawField = function (steps, uniform) {
         steps = steps || 20;
 
@@ -44,32 +78,15 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
                     dx = dx / mag;
                     dy = dy / mag;
                 }
-                data.push([x, y, dx * t_step / 4, dy * t_step / 4]);
+                dx *= t_step / 4;
+                dy *= t_step / 4;
+                data.push({
+                    'x1': x - dx, 'y1': y - dy, 'x2': x + dx, 'y2': y + dy
+                });
             }
         }
 
-        x1_fn = function (d) {
-            return (d[0] - xlim[0] - d[2]) * x_scale
-        };
-        y1_fn = function (d) {
-            return (d[1] - ylim[0] - d[3]) * y_scale;
-        };
-        x2_fn = function (d) {
-            return (d[0] - xlim[0] + d[2]) * x_scale;
-        };
-        y2_fn = function (d) {
-            return (d[1] - ylim[0] + d[3]) * y_scale;
-        };
-        //TODO make this draw with arrows
-        svg.selectAll('field' + Math.round(10000 * Math.random()))
-            .data(data)
-            .enter()
-            .append('line')
-            .attr('x1', x1_fn)
-            .attr('y1', y1_fn)
-            .attr('x2', x2_fn)
-            .attr('y2', y2_fn)
-            .style('stroke', 'black');
+        plotLines(data);
     };
 
     var drawSlopeField = function (steps) {
@@ -85,43 +102,30 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
         step = step || 0.1;
 
         start = start || [0, 0];
-        var data = [[start[0], start[1], start[0], start[1], 0]];
+        var data = [{
+            'x1': start[0],
+            'y1': start[1],
+            'x2': start[0],
+            'y2': start[1]
+        }];
 
         for (var i = 0; i < steps; i++) {
-            var cur = data[i];
             var dx, dy;
+            var x = data[i]['x2'];
+            var y = data[i]['y2'];
             if (improved && !improved) {
-                var fy = fn_y(cur[0], cur[1]);
-                var fx = fn_x(cur[0], cur[1]);
-                dx = (fx + fn_x(cur[0] + fx * step, cur[1] + step)) * step / 2;
-                dy = (fy + fn_y(cur[0] + fy * step, cur[1] + step)) * step / 2;
+                var fy = fn_y(x, y);
+                var fx = fn_x(x, y);
+                dx = (fx + fn_x(x + fx * step, y + step)) * step / 2;
+                dy = (fy + fn_y(x + fy * step, y + step)) * step / 2;
             } else {
-                dx = fn_x(cur[0], cur[1]) * step;
-                dy = fn_y(cur[0], cur[1]) * step;
+                dx = fn_x(x, y) * step;
+                dy = fn_y(x, y) * step;
             }
-            data.push([cur[0] + dx, cur[1] + dy, cur[0], cur[1], dy]);
+            data.push({'x1': x, 'y1': y, 'x2': x + dx, 'y2': y + dy});
         }
 
-        svg.selectAll('eulerapprox' + Math.round(10000 * Math.random()))
-            .data(data)
-            .enter()
-            .append('line')
-            .attr('x1', function (d) {
-                return (d[0] - xlim[0]) * x_scale;
-            })
-            .attr('y1', function (d) {
-                return (d[1] - ylim[0]) * y_scale;
-            })
-            .attr('x2', function (d) {
-                return (d[2] - xlim[0]) * x_scale;
-            })
-            .attr('y2', function (d) {
-                return (d[3] - ylim[0]) * y_scale;
-            })
-            .style('stroke', function (d) {
-                return 'rgb(' + Math.round(d[4] / step * 255) + ',0,'
-                    + (-Math.round(d[4] / step * 255)) + ')';
-            });
+        plotLines(data, getSlopeColorFn(step));
     };
 
     var drawComponentPlot = function (start, steps, step) {
@@ -129,57 +133,25 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
         step = step || 0.1;
 
         start = start || [0, 0, 0];
-        var data = [[start[0], start[1], start[2], 0, 0]];
+        console.log(start);
+        var t0 = start[2];
+        var data1 = [{'x1': t0, 'x2': t0, 'y1': start[0], 'y2': start[0]}];
+        var data2 = [{'x1': t0, 'x2': t0, 'y1': start[1], 'y2': start[1]}];
 
         for (var i = 0; i < steps; i++) {
-            var cur = data[i];
-            var t = start[2] + i * step;
-            var dx = fn_x(cur[0], cur[1], t) * step;
-            var dy = fn_y(cur[0], cur[1], t) * step;
-            data.push([cur[0] + dx, cur[1] + dy, dx, dy, t]);
+            var x = data1[i]['y2'];
+            var y = data2[i]['y2'];
+            var t = t0 + i * step;
+            var dx = fn_x(x, y, t) * step;
+            var dy = fn_y(x, y, t) * step;
+            //noinspection JSSuspiciousNameCombination
+            data1.push({'x1': t, 'x2': t + step, 'y1': x, 'y2': x + dx});
+            data2.push({'x1': t, 'x2': t + step, 'y1': y, 'y2': y + dy});
         }
 
-        svg.selectAll('eulerapprox' + Math.round(10000 * Math.random()))
-            .data(data.slice(1))
-            .enter()
-            .append('line')
-            .attr('x1', function (d, i) {
-                return (i * step + start[2] - xlim[0]) * x_scale;
-            })
-            .attr('y1', function (d, i) {
-                return (data[i][0] - ylim[0]) * y_scale;
-            })
-            .attr('x2', function (d, i) {
-                return ((i + 1) * step + start[2] - xlim[0]) * x_scale;
-            })
-            .attr('y2', function (d) {
-                return (d[0] - ylim[0]) * y_scale;
-            })
-            .style('stroke', function (d) {
-                return 'rgb(' + Math.round(d[2] / step * 255) + ',0,'
-                    + (-Math.round(d[2] / step * 255)) + ')';
-            });
+        plotLines(data1, getSlopeColorFn(step));
+        plotLines(data2, getSlopeColorFn(step));
 
-        svg.selectAll('eulerapprox' + Math.round(10000 * Math.random()))
-            .data(data.slice(1))
-            .enter()
-            .append('line')
-            .attr('x1', function (d, i) {
-                return (i * step + start[2] - xlim[0]) * x_scale;
-            })
-            .attr('y1', function (d, i) {
-                return (data[i][1] - ylim[0]) * y_scale;
-            })
-            .attr('x2', function (d, i) {
-                return ((i + 1) * step + start[2] - xlim[0]) * x_scale;
-            })
-            .attr('y2', function (d) {
-                return (d[1] - ylim[0]) * y_scale;
-            })
-            .style('stroke', function (d) {
-                return 'rgb(' + Math.round(d[3] / step * 255) + ',0,'
-                    + (-Math.round(d[3] / step * 255)) + ')';
-            });
     };
 
     var drawExactFunction = function (start, steps, step, fn) {
@@ -187,34 +159,20 @@ graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {
         step = step || 0.1;
 
         start = start || [0, 1];
-        var data = [[start[0], start[1], start[0], start[1], 0]];
+        var data = [{
+            'x1': start[0],
+            'y1': start[1],
+            'x2': start[0],
+            'y2': start[1]
+        }];
 
         for (var i = 0; i < steps; i++) {
-            var cur = data[i];
-            var y = fn(cur[0] + step);
-            data.push([cur[0] + step, y, cur[0], cur[1], y - cur[1]]);
+            var x = data[i]['x2'];
+            var y = fn(x + step);
+            data.push({'x1': x, 'x2': x + step, 'y1': data[i]['y2'], 'y2': y});
         }
 
-        svg.selectAll('fn' + Math.round(10000 * Math.random()))
-            .data(data)
-            .enter()
-            .append('line')
-            .attr('x1', function (d) {
-                return (d[0] - xlim[0]) * x_scale;
-            })
-            .attr('y1', function (d) {
-                return (d[1] - ylim[0]) * y_scale;
-            })
-            .attr('x2', function (d) {
-                return (d[2] - xlim[0]) * x_scale;
-            })
-            .attr('y2', function (d) {
-                return (d[3] - ylim[0]) * y_scale;
-            })
-            .style('stroke', function (d) {
-                return 'rgb(' + Math.round(d[4] / step * 255) + ',0,'
-                    + (-Math.round(d[4] / step * 255)) + ')';
-            });
+        plotLines(data, getSlopeColorFn(step));
     };
 
     return {

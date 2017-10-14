@@ -94,41 +94,24 @@
             var chart = document.getElementById('chart');
             if (graph_type.indexOf('field') >= 0) {
                 chart.onclick = function (evt) {
-                    g.drawEulerApprox(mouse_pos_to_xy(g, evt),
+                    g.drawEulerApprox(mousePosToXY(g, evt),
                         euler_steps, euler_step, true);
                 };
-                chart.onmousemove = function (evt) {
-                    xy = mouse_pos_to_xy(g, evt);
-                    var mouse_coord = document.getElementById('mouse_coord');
-                    mouse_coord.style.left = (evt.clientX + 3) + 'px';
-                    mouse_coord.style.top = (evt.clientY + 3) + 'px';
-                    var x = xy[0] < 0 ? xy[0].toFixed(2) : xy[0].toFixed(3);
-                    var y = xy[1] < 0 ? xy[1].toFixed(2) : xy[1].toFixed(3);
-                    mouse_coord.innerHTML = 'x: ' + x + '  y: ' + y;
-                }
+                chart.onmousemove = getMouseCoordDisplayer(g);
             } else {
                 chart.onclick = function (evt) {
-                    var coord = mouse_pos_to_xy(g, evt);
+                    var coord = mousePosToXY(g, evt);
                     coord.push(t0);
                     g.drawComponentPlot(coord, component_steps, component_step);
                 };
 
-                chart.onmousemove = function (evt) {
-                    xy = mouse_pos_to_xy(g, evt);
-                    var mouse_coord = document.getElementById('mouse_coord');
-                    mouse_coord.style.left = (evt.clientX + 3) + 'px';
-                    mouse_coord.style.top = (evt.clientY + 3) + 'px';
-                    var t = xy[0] < 0 ? xy[0].toFixed(3) : xy[0].toFixed(4);
-                    var out = xy[1] < 0 ? xy[1].toFixed(3) : xy[1].toFixed(4);
-                    mouse_coord.innerHTML = 't: ' + t + '  x, y: ' + out;
-                }
+                chart.onmousemove = getMouseCoordDisplayer(g);
             }
-
 
             return g;
         };
 
-        var mouse_pos_to_xy = function (g, evt) {
+        var mousePosToXY = function (g, evt) {
             var e = evt.target;
             var dim = e.getBoundingClientRect();
             var x = evt.clientX - dim.left;
@@ -136,6 +119,18 @@
             x = g.get_xlim()[0] + x / g.get_x_scale();
             y = g.get_ylim()[0] + y / g.get_y_scale();
             return [x, y];
+        };
+
+        var getMouseCoordDisplayer = function(g) {
+            return function(evt) {
+                var xy = mousePosToXY(g, evt);
+                var mouse_coord = document.getElementById('mouse_coord');
+                mouse_coord.style.left = (evt.clientX + 3) + 'px';
+                mouse_coord.style.top = (evt.clientY + 3) + 'px';
+                var t = xy[0] < 0 ? xy[0].toFixed(3) : xy[0].toFixed(4);
+                var out = xy[1] < 0 ? xy[1].toFixed(3) : xy[1].toFixed(4);
+                mouse_coord.innerHTML = 't: ' + t + '  x, y: ' + out;
+            }
         };
 
         window.onload = function () {
@@ -311,19 +306,6 @@
                 Mouse Coordinate</p>
             <svg width="800" height="800" style="border: solid 1px black"
                  id="chart">
-                <defs>
-                    <marker
-                            id="arrow"
-                            markerUnits="strokeWidth"
-                            markerWidth="12"
-                            markerHeight="12"
-                            viewBox="0 0 12 12"
-                            refX="6"
-                            refY="6"
-                            orient="auto">
-                        <path d="M2,2 L10,6 L2,10 L6,6 L2,2" style="fill: #f00;"></path>
-                    </marker>
-                </defs>
             </svg>
         </div>
     </div>
