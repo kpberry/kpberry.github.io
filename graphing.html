@@ -97,7 +97,7 @@
                     g.drawApproxFunction(mousePosToXY(g, evt),
                         euler_steps, euler_step, 'runge-kutta');
                 };
-                chart.onmousemove = getMouseCoordDisplayer(g);
+                chart.onmousemove = getMouseCoordDisplayer(g, 'x', 'y');
             } else {
                 chart.onclick = function (evt) {
                     var coord = mousePosToXY(g, evt);
@@ -105,7 +105,7 @@
                     g.drawComponentPlot(coord, component_steps, component_step);
                 };
 
-                chart.onmousemove = getMouseCoordDisplayer(g);
+                chart.onmousemove = getMouseCoordDisplayer(g, 't', 'x, y');
             }
 
             return g;
@@ -121,15 +121,17 @@
             return [x, y];
         };
 
-        var getMouseCoordDisplayer = function (g) {
+        var getMouseCoordDisplayer = function (g, x_label, y_label) {
             return function (evt) {
                 var xy = mousePosToXY(g, evt);
                 var mouse_coord = document.getElementById('mouse_coord');
                 mouse_coord.style.left = (evt.clientX + 3) + 'px';
                 mouse_coord.style.top = (evt.clientY + 3) + 'px';
-                var t = xy[0] < 0 ? xy[0].toFixed(3) : xy[0].toFixed(4);
-                var out = xy[1] < 0 ? xy[1].toFixed(3) : xy[1].toFixed(4);
-                mouse_coord.innerHTML = 't: ' + t + '  x, y: ' + out;
+                var x = xy[0] < 0 ? xy[0].toFixed(3) : xy[0].toFixed(4);
+                var y = xy[1] < 0 ? xy[1].toFixed(3) : xy[1].toFixed(4);
+                mouse_coord.innerHTML =
+                    x_label + ': ' + x + ' '
+                    + y_label + ': ' + y;
             }
         };
 
