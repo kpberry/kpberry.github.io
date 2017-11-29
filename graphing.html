@@ -1,316 +1,350 @@
 <html>
 <head>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="res/math.js" type="text/javascript"></script>
-    <script src="js/graphing.js" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="styles/w3css.css"/>
-    <script>
-        var resetGraph = function () {
-            var min_x = +document.getElementById('min_x').value;
-            var max_x = +document.getElementById('max_x').value;
-            var min_y = +document.getElementById('min_y').value;
-            var max_y = +document.getElementById('max_y').value;
-            var euler_step = +document.getElementById('euler_step').value;
-            var euler_steps = +document.getElementById('euler_steps').value;
-            var component_step = +document.getElementById('component_step').value;
-            var component_steps = +document.getElementById('component_steps').value;
-            var t0 = +document.getElementById('t0').value;
-            var steps = +document.getElementById('steps').value;
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="res/math.js" type="text/javascript"></script>
+  <script src="js/graphing.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="styles/w3css.css"/>
+  <script>
+      var resetGraph = function () {
+          var min_x = +document.getElementById('min_x').value;
+          var max_x = +document.getElementById('max_x').value;
+          var min_y = +document.getElementById('min_y').value;
+          var max_y = +document.getElementById('max_y').value;
+          var euler_step = +document.getElementById('euler_step').value;
+          var euler_steps = +document.getElementById('euler_steps').value;
+          var component_step = +document.getElementById('component_step').value;
+          var component_steps = +document.getElementById('component_steps').value;
+          var x0 = +document.getElementById('x0').value;
+          var y0 = +document.getElementById('y0').value;
+          var t0 = +document.getElementById('t0').value;
+          var steps = +document.getElementById('steps').value;
 
-            var expr_y, math_fn_y, expr_x, math_fn_x;
-            var fn_x = function () {
-                return 1;
-            };
-            var fn_y;
+          var expr_y, math_fn_y, expr_x, math_fn_x;
+          var fn_x = function () {
+              return 1;
+          };
+          var fn_y;
 
-            var graph_type = document.getElementById('graph_type').value;
+          var graph_type = document.getElementById('graph_type').value;
 
-            switch (graph_type) {
-                case 'direction_field':
-                case 'slope_field':
-                case 'component_plot':
-                    expr_y = document.getElementById('fn_y').value
-                        || 'sin(x) + cos(y)';
-                    math_fn_y = math.compile(expr_y.toLowerCase());
-                    fn_y = function (x, y, t) {
-                        return math_fn_y.eval({
-                            'x': x || 0,
-                            'y': y || 0,
-                            't': t || 0
-                        });
-                    };
-                    break;
-                case 'system_direction_field':
-                case 'system_slope_field':
-                case 'system_component_plot':
-                    expr_x = document.getElementById('s_fn_x').value || '1';
-                    math_fn_x = math.compile(expr_x.toLowerCase());
-                    fn_x = function (x, y, t) {
-                        return math_fn_x.eval({
-                            'x': x || 0,
-                            'y': y || 0,
-                            't': t || 0
-                        });
-                    };
+          switch (graph_type) {
+              case 'direction_field':
+              case 'slope_field':
+              case 'component_plot':
+                  expr_y = document.getElementById('fn_y').value
+                      || 'sin(x) + cos(y)';
+                  math_fn_y = math.compile(expr_y.toLowerCase());
+                  fn_y = function (x, y, t) {
+                      return math_fn_y.eval({
+                          'x': x || 0,
+                          'y': y || 0,
+                          't': t || 0
+                      });
+                  };
+                  break;
+              case 'system_direction_field':
+              case 'system_slope_field':
+              case 'system_component_plot':
+                  expr_x = document.getElementById('s_fn_x').value || '1';
+                  math_fn_x = math.compile(expr_x.toLowerCase());
+                  fn_x = function (x, y, t) {
+                      return math_fn_x.eval({
+                          'x': x || 0,
+                          'y': y || 0,
+                          't': t || 0
+                      });
+                  };
 
-                    expr_y = document.getElementById('s_fn_y').value
-                        || 'sin(x) + cos(y)';
-                    math_fn_y = math.compile(expr_y.toLowerCase());
-                    fn_y = function (x, y, t) {
-                        return math_fn_y.eval({
-                            'x': x || 0,
-                            'y': y || 0,
-                            't': t || 0
-                        });
-                    };
-                    break;
-            }
+                  expr_y = document.getElementById('s_fn_y').value
+                      || 'sin(x) + cos(y)';
+                  math_fn_y = math.compile(expr_y.toLowerCase());
+                  fn_y = function (x, y, t) {
+                      return math_fn_y.eval({
+                          'x': x || 0,
+                          'y': y || 0,
+                          't': t || 0
+                      });
+                  };
+                  break;
+          }
 
-            var g = graphing.graph('#chart', fn_y, fn_x,
-                [min_x, max_x], [min_y, max_y]);
-            g.clear();
+          var g = graphing.graph('#chart', fn_y, fn_x,
+              [min_x, max_x], [min_y, max_y]);
+          g.clear();
 
-            switch (graph_type) {
-                case 'direction_field':
-                    g.drawDirectionField(steps);
-                    break;
-                case 'slope_field':
-                    g.drawSlopeField(steps);
-                    break;
-                case 'component_plot':
-                    g.drawComponentPlot([0, 0, t0], component_steps, component_step);
-                    break;
-                case 'system_direction_field':
-                    g.drawDirectionField(steps);
-                    break;
-                case 'system_slope_field':
-                    g.drawSlopeField(steps);
-                    break;
-                case 'system_component_plot':
-                    g.drawComponentPlot([0, 0, t0], component_steps, component_step);
-                    break;
-            }
+          switch (graph_type) {
+              case 'direction_field':
+                  g.drawDirectionField(steps);
+                  break;
+              case 'slope_field':
+                  g.drawSlopeField(steps);
+                  break;
+              case 'component_plot':
+                  g.drawComponentPlot([x0, y0, t0], component_steps, component_step);
+                  break;
+              case 'system_direction_field':
+                  g.drawDirectionField(steps);
+                  break;
+              case 'system_slope_field':
+                  g.drawSlopeField(steps);
+                  break;
+              case 'system_component_plot':
+                  g.drawComponentPlot([x0, y0, t0], component_steps, component_step);
+                  break;
+          }
 
-            var chart = document.getElementById('chart');
-            if (graph_type.indexOf('field') >= 0) {
-                chart.onclick = function (evt) {
-                    g.drawApproxFunction(mousePosToXY(g, evt),
-                        euler_steps, euler_step, 'runge-kutta');
-                };
-                chart.onmousemove = getMouseCoordDisplayer(g, 'x', 'y');
-            } else {
-                chart.onclick = function (evt) {
-                    var coord = mousePosToXY(g, evt);
-                    coord.push(t0);
-                    g.drawComponentPlot(coord, component_steps, component_step);
-                };
+          var chart = document.getElementById('chart');
+          var solutionPlotter = document.getElementById('solution-plotter');
+          if (graph_type.indexOf('field') >= 0) {
+              chart.onclick = function (evt) {
+                  g.drawApproxFunction(mousePosToXY(g, evt),
+                      euler_steps, euler_step, 'runge-kutta');
+              };
+              solutionPlotter.onclick = function (evt) {
+                  var x0 = +document.getElementById('x0').value;
+                  var y0 = +document.getElementById('y0').value;
+                  g.drawApproxFunction([x0, y0], euler_steps, euler_step,
+                      'runge-kutta');
+              };
+              chart.onmousemove = getMouseCoordDisplayer(g, 'x', 'y');
+          } else {
+              chart.onclick = function (evt) {
+                  var coord = mousePosToXY(g, evt);
+                  coord.push(t0);
+                  g.drawComponentPlot(coord, component_steps, component_step);
+              };
+              solutionPlotter.onclick = function (evt) {
+                  console.log('...');
+                  x0 = +document.getElementById('x0').value;
+                  y0 = +document.getElementById('y0').value;
+                  g.drawComponentPlot([x0, y0, t0], component_steps, component_step);
+              };
 
-                chart.onmousemove = getMouseCoordDisplayer(g, 't', 'x, y');
-            }
+              chart.onmousemove = getMouseCoordDisplayer(g, 't', 'x, y');
+          }
 
-            return g;
-        };
+          return g;
+      };
 
-        var mousePosToXY = function (g, evt) {
-            var e = evt.target;
-            var dim = e.getBoundingClientRect();
-            var x = evt.clientX - dim.left;
-            var y = dim.bottom - evt.clientY;
-            x = g.get_xlim()[0] + x / g.get_x_scale();
-            y = g.get_ylim()[0] + y / g.get_y_scale();
-            return [x, y];
-        };
+      var mousePosToXY = function (g, evt) {
+          var e = evt.target;
+          var dim = e.getBoundingClientRect();
+          var x = evt.clientX - dim.left;
+          var y = dim.bottom - evt.clientY;
+          x = g.get_xlim()[0] + x / g.get_x_scale();
+          y = g.get_ylim()[0] + y / g.get_y_scale();
+          return [x, y];
+      };
 
-        var getMouseCoordDisplayer = function (g, x_label, y_label) {
-            return function (evt) {
-                var xy = mousePosToXY(g, evt);
-                var mouse_coord = document.getElementById('mouse_coord');
-                mouse_coord.style.left = (evt.clientX + 3) + 'px';
-                mouse_coord.style.top = (evt.clientY + 3) + 'px';
-                var x = xy[0] < 0 ? xy[0].toFixed(3) : xy[0].toFixed(4);
-                var y = xy[1] < 0 ? xy[1].toFixed(3) : xy[1].toFixed(4);
-                mouse_coord.innerHTML =
-                    x_label + ': ' + x + ' '
-                    + y_label + ': ' + y;
-            }
-        };
+      var getMouseCoordDisplayer = function (g, x_label, y_label) {
+          return function (evt) {
+              var xy = mousePosToXY(g, evt);
+              var mouse_coord = document.getElementById('mouse_coord');
+              mouse_coord.style.left = (evt.clientX + 3) + 'px';
+              mouse_coord.style.top = (evt.clientY + 3) + 'px';
+              var x = xy[0] < 0 ? xy[0].toFixed(3) : xy[0].toFixed(4);
+              var y = xy[1] < 0 ? xy[1].toFixed(3) : xy[1].toFixed(4);
+              mouse_coord.innerHTML =
+                  x_label + ': ' + x + ' '
+                  + y_label + ': ' + y;
+          }
+      };
 
-        window.onload = function () {
-            var redrawable = ['fn_y', 's_fn_y', 's_fn_x',
-                'min_x', 'max_x', 'min_y', 'max_y',
-                'steps', 'euler_step', 'euler_steps', 't0'];
-            for (var i = 0; i < redrawable.length; i++) {
-                var cur = document.getElementById(redrawable[i]);
-                cur.addEventListener('keydown', function (e) {
-                    if (e.keyCode === 13) {
-                        resetGraph();
-                    }
-                });
-            }
-            var graph_type = document.getElementById('graph_type');
-            graph_type.onchange = function () {
-                if (graph_type.value.indexOf('system') >= 0) {
-                    document.getElementById('field').classList.add('w3-hide');
-                    document.getElementById('system_field').classList.remove('w3-hide');
-                } else {
-                    document.getElementById('field').classList.remove('w3-hide');
-                    document.getElementById('system_field').classList.add('w3-hide');
-                }
+      window.onload = function () {
+          var redrawable = ['fn_y', 's_fn_y', 's_fn_x',
+              'min_x', 'max_x', 'min_y', 'max_y',
+              'steps', 'euler_step', 'euler_steps', 't0', 'x0', 'y0'];
+          for (var i = 0; i < redrawable.length; i++) {
+              var cur = document.getElementById(redrawable[i]);
+              cur.addEventListener('keydown', function (e) {
+                  if (e.keyCode === 13) {
+                      resetGraph();
+                  }
+              });
+          }
+          var graph_type = document.getElementById('graph_type');
+          graph_type.onchange = function () {
+              if (graph_type.value.indexOf('system') >= 0) {
+                  document.getElementById('field').classList.add('w3-hide');
+                  document.getElementById('system_field').classList.remove('w3-hide');
+              } else {
+                  document.getElementById('field').classList.remove('w3-hide');
+                  document.getElementById('system_field').classList.add('w3-hide');
+              }
 
-                if (graph_type.value.indexOf('component') >= 0) {
-                    document.getElementById('field_attributes').classList.add('w3-hide');
-                    document.getElementById('component_attributes').classList.remove('w3-hide');
-                } else {
-                    document.getElementById('field_attributes').classList.remove('w3-hide');
-                    document.getElementById('component_attributes').classList.add('w3-hide');
-                }
-            }
-        };
-    </script>
+              if (graph_type.value.indexOf('component') >= 0) {
+                  document.getElementById('field_attributes').classList.add('w3-hide');
+                  document.getElementById('component_attributes').classList.remove('w3-hide');
+              } else {
+                  document.getElementById('field_attributes').classList.remove('w3-hide');
+                  document.getElementById('component_attributes').classList.add('w3-hide');
+              }
+          }
+      };
+  </script>
 </head>
 <body>
 <div class="w3-panel w3-display-topmiddle w3-col l8 m12 s12 w3-mobile">
-    <div class="w3-card-4">
-        <nav class="w3-bar w3-red w3-card-2">
-            <a href="index.html" class="w3-bar-item w3-button w3-hover-white">Home</a>
-            <a href="projects.html"
-               class="w3-bar-item w3-button w3-hover-white">Projects</a>
-            <a href="resume.html" class="w3-bar-item w3-button w3-hover-white">Resume</a>
-        </nav>
-        <div class="w3-panel">
-            <div class="w3-block">
-                <label for="graph_type"> Graph Type </label>
-                <select id="graph_type" class="w3-block w3-select">
-                    <option value="direction_field">Direction Field</option>
-                    <option value="slope_field">Slope Field</option>
-                    <option value="component_plot">Component Plot</option>
-                    <option value="system_direction_field">Autonomous System
-                        Direction Field
-                    </option>
-                    <option value="system_slope_field">Autonomous System Slope
-                        Field
-                    </option>
-                    <option value="system_component_plot">System Component
-                        Plot
-                    </option>
-                </select>
-            </div>
-            <hr>
-            <div id="field">
-                <div class="w3-bar">
-                    <div class="w3-quarter w3-bar-item">
-                        <label for="fn_y">dy/dx = </label>
-                    </div>
-                    <div class="w3-rest">
-                        <input id="fn_y" type="text"
-                               placeholder="sin(x) + cos(y)"
-                               class="w3-input w3-border">
-                    </div>
-                </div>
-            </div>
-            <div id="system_field" class="w3-hide">
-                <div class="w3-bar">
-                    <div class="w3-quarter w3-bar-item">
-                        <label for="s_fn_y">dy/dt = </label>
-                    </div>
-                    <div class="w3-rest">
-                        <input id="s_fn_y" type="text"
-                               placeholder="sin(x) + cos(y)"
-                               class="w3-input w3-border">
-                    </div>
-                </div>
-                <div class="w3-bar">
-                    <div class="w3-quarter w3-bar-item">
-                        <label for="s_fn_x">dx/dt = </label>
-                    </div>
-                    <div class="w3-rest">
-                        <input id="s_fn_x" type="text" placeholder="1"
-                               class="w3-input w3-border">
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <div class="w3-row">
-                <div class="w3-row-padding w3-half">
-                    <div class="w3-quarter">
-                        <label for="min_x">Min x</label>
-                        <input id="min_x" type="number" placeholder="-5"
-                               value="-5"
-                               class="w3-input w3-border">
-                    </div>
-                    <div class="w3-quarter">
-                        <label for="max_x">Max x</label>
-                        <input id="max_x" type="number" placeholder="5"
-                               value="5"
-                               class="w3-input w3-border">
-                    </div>
-                    <div class="w3-quarter">
-                        <label for="min_y">Min y</label>
-                        <input id="min_y" type="number" placeholder="-5"
-                               value="-5"
-                               class="w3-input w3-border">
-                    </div>
-                    <div class="w3-quarter">
-                        <label for="max_y">Max y</label>
-                        <input id="max_y" type="number" placeholder="5"
-                               value="5"
-                               class="w3-input w3-border">
-                    </div>
-                </div>
-                <div id="field_attributes" class="w3-row-padding w3-rest">
-                    <div class="w3-third">
-                        <label for="steps">Field Density</label>
-                        <input id="steps" type="number" placeholder="40"
-                               value="40" class="w3-input w3-border">
-                    </div>
-                    <div class="w3-third">
-                        <label for="euler_steps">Euler Steps</label>
-                        <input id="euler_steps" type="number" placeholder="2000"
-                               value="2000" class="w3-input w3-border">
-                    </div>
-                    <div class="w3-third">
-                        <label for="euler_step">Euler Step Size</label>
-                        <input id="euler_step" type="number" placeholder="0.01"
-                               value="0.01" class="w3-input w3-border">
-                    </div>
-                </div>
-                <div id="component_attributes"
-                     class="w3-row-padding w3-rest w3-hide">
-                    <div class="w3-third">
-                        <label for="t0">Initial t</label>
-                        <input id="t0" type="number" placeholder="0" value="0"
-                               class="w3-input w3-border">
-                    </div>
-                    <div class="w3-third">
-                        <label for="component_steps">Steps</label>
-                        <input id="component_steps" type="number"
-                               placeholder="2000"
-                               value="2000" class="w3-input w3-border">
-                    </div>
-                    <div class="w3-third">
-                        <label for="component_step">Step Size</label>
-                        <input id="component_step" type="number"
-                               placeholder="0.01"
-                               value="0.01" class="w3-input w3-border">
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <div class="w3-center">
-                <button onclick="resetGraph()"
-                        class="w3-button w3-center w3-block w3-red w3-hover-white">
-                    Draw Graph
-                </button>
-            </div>
+  <div class="w3-card-4">
+    <nav class="w3-bar w3-red w3-card-2">
+      <a href="index.html" class="w3-bar-item w3-button w3-hover-white">Home</a>
+      <a href="projects.html"
+         class="w3-bar-item w3-button w3-hover-white">Projects</a>
+      <a href="resume.html"
+         class="w3-bar-item w3-button w3-hover-white">Resume</a>
+    </nav>
+    <div class="w3-panel">
+      <div class="w3-block">
+        <label for="graph_type"> Graph Type </label>
+        <select id="graph_type" class="w3-block w3-select">
+          <option value="direction_field">Direction Field</option>
+          <option value="slope_field">Slope Field</option>
+          <option value="component_plot">Component Plot</option>
+          <option value="system_direction_field">Autonomous System
+            Direction Field
+          </option>
+          <option value="system_slope_field">Autonomous System Slope
+            Field
+          </option>
+          <option value="system_component_plot">System Component
+            Plot
+          </option>
+        </select>
+      </div>
+      <hr>
+      <div id="field">
+        <div class="w3-bar">
+          <div class="w3-quarter w3-bar-item">
+            <label for="fn_y">dy/dx = </label>
+          </div>
+          <div class="w3-rest">
+            <input id="fn_y" type="text"
+                   placeholder="sin(x) + cos(y)"
+                   class="w3-input w3-border">
+          </div>
         </div>
-        <div class="w3-center w3-container w3-padding-large">
-            <p style="font-family: monospace" id="mouse_coord">
-                Mouse Coordinate</p>
-            <svg width="800" height="800" style="border: solid 1px black"
-                 id="chart">
-            </svg>
+      </div>
+      <div id="system_field" class="w3-hide">
+        <div class="w3-bar">
+          <div class="w3-quarter w3-bar-item">
+            <label for="s_fn_y">dy/dt = </label>
+          </div>
+          <div class="w3-rest">
+            <input id="s_fn_y" type="text"
+                   placeholder="sin(x) + cos(y)"
+                   class="w3-input w3-border">
+          </div>
         </div>
+        <div class="w3-bar">
+          <div class="w3-quarter w3-bar-item">
+            <label for="s_fn_x">dx/dt = </label>
+          </div>
+          <div class="w3-rest">
+            <input id="s_fn_x" type="text" placeholder="1"
+                   class="w3-input w3-border">
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="w3-row">
+        <div class="w3-row-padding w3-half">
+          <div class="w3-quarter">
+            <label for="min_x">Min x</label>
+            <input id="min_x" type="number" placeholder="-5"
+                   value="-5"
+                   class="w3-input w3-border">
+          </div>
+          <div class="w3-quarter">
+            <label for="max_x">Max x</label>
+            <input id="max_x" type="number" placeholder="5"
+                   value="5"
+                   class="w3-input w3-border">
+          </div>
+          <div class="w3-quarter">
+            <label for="min_y">Min y</label>
+            <input id="min_y" type="number" placeholder="-5"
+                   value="-5"
+                   class="w3-input w3-border">
+          </div>
+          <div class="w3-quarter">
+            <label for="max_y">Max y</label>
+            <input id="max_y" type="number" placeholder="5"
+                   value="5"
+                   class="w3-input w3-border">
+          </div>
+        </div>
+        <div id="field_attributes" class="w3-row-padding w3-rest">
+          <div class="w3-third">
+            <label for="steps">Field Density</label>
+            <input id="steps" type="number" placeholder="40"
+                   value="40" class="w3-input w3-border">
+          </div>
+          <div class="w3-third">
+            <label for="euler_steps">Euler Steps</label>
+            <input id="euler_steps" type="number" placeholder="2000"
+                   value="2000" class="w3-input w3-border">
+          </div>
+          <div class="w3-third">
+            <label for="euler_step">Euler Step Size</label>
+            <input id="euler_step" type="number" placeholder="0.01"
+                   value="0.01" class="w3-input w3-border">
+          </div>
+        </div>
+        <div id="component_attributes"
+             class="w3-row-padding w3-rest w3-hide">
+          <div class="w3-col m2 s2 l2">
+            <label for="t0">Initial t</label>
+            <input id="t0" type="number" placeholder="0" value="0"
+                   class="w3-input w3-border">
+          </div>
+          <div class="w3-col m2 s2 l2">
+            <label for="t0">Initial x</label>
+            <input id="x0" type="number" placeholder="0" value="0"
+                   class="w3-input w3-border">
+          </div>
+          <div class="w3-col m2 s2 l2">
+            <label for="t0">Initial y</label>
+            <input id="y0" type="number" placeholder="0" value="0"
+                   class="w3-input w3-border">
+          </div>
+          <div class="w3-quarter">
+            <label for="component_steps">Steps</label>
+            <input id="component_steps" type="number"
+                   placeholder="2000"
+                   value="2000" class="w3-input w3-border">
+          </div>
+          <div class="w3-quarter">
+            <label for="component_step">Step Size</label>
+            <input id="component_step" type="number"
+                   placeholder="0.01"
+                   value="0.01" class="w3-input w3-border">
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="w3-center w3-row-padding w3-container">
+        <div class="w3-container w3-col w3-half">
+          <button onclick="resetGraph()"
+                  class="w3-button w3-center w3-red w3-hover-white w3-block">
+            Draw Graph
+          </button>
+        </div>
+        <div class="w3-container w3-col w3-half">
+          <button id="solution-plotter"
+                  class="w3-button w3-center w3-red w3-hover-white w3-block">
+            Plot Solution
+          </button>
+        </div>
+      </div>
     </div>
+    <div class="w3-center w3-container w3-padding-large">
+      <p style="font-family: monospace" id="mouse_coord">
+        Mouse Coordinate</p>
+      <svg width="800" height="800" style="border: solid 1px black"
+           id="chart">
+      </svg>
+    </div>
+  </div>
 </div>
 
 </body>
