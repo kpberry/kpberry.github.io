@@ -100,7 +100,7 @@
                   g.drawApproxFunction(mousePosToXY(g, evt),
                       euler_steps, euler_step, 'runge-kutta');
               };
-              solutionPlotter.onclick = function (evt) {
+              solutionPlotter.onclick = function () {
                   var x0 = +document.getElementById('x0').value;
                   var y0 = +document.getElementById('y0').value;
                   g.drawApproxFunction([x0, y0], euler_steps, euler_step,
@@ -113,7 +113,7 @@
                   coord.push(t0);
                   g.drawComponentPlot(coord, component_steps, component_step);
               };
-              solutionPlotter.onclick = function (evt) {
+              solutionPlotter.onclick = function () {
                   console.log('...');
                   x0 = +document.getElementById('x0').value;
                   y0 = +document.getElementById('y0').value;

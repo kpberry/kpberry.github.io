@@ -1,0 +1,79 @@
+<html>
+
+<head>
+    <script>
+        let CLOCKWISE = 1;
+        let COUNTERCLOCKWISE = -1;
+
+        let WHITE = 0;
+        let BLACK = 1;
+
+        window.onload = function () {
+            let canv = document.getElementById('canv');
+            let ctx = canv.getContext('2d');
+
+            run_ant(ctx);
+        };
+
+        let run_ant = function(ctx) {
+            let ant = {'x': 100, 'y': 50, 'dx': -1, 'dy': 0};
+            let tape = [];
+            for (let i = 0; i < 2048; i++) {
+                tape[i] = [];
+                for (let j = 0; j < 2048; j++) {
+                    tape[i][j] = WHITE;
+                }
+            }
+
+            // while (true) {
+            //     ant_step(ant, tape, ctx);
+            // }
+            setInterval(function() {
+                ant_step(ant, tape, ctx);
+            }, 50);
+        };
+
+        let ant_step = function (ant, tape, ctx) {
+            let prev = {
+                'x': ant.x,
+                'y': ant.y
+            };
+            if (tape[ant.x][ant.y] == BLACK) {
+                ant_turn(ant, CLOCKWISE);
+            } else {
+                ant_turn(ant, COUNTERCLOCKWISE);
+            }
+
+            ant.x += ant.dx;
+            ant.y -= ant.dy;
+
+            ctx.fillStyle = "red";
+            ctx.beginPath();
+            ctx.rect(ant.x * 10, ant.y * 10, 10, 10);
+            ctx.fill();
+
+            let prev_color = tape[prev.x][prev.y];
+            ctx.fillStyle = prev_color == WHITE ? "red" : "white";
+            tape[prev.x][prev.y] = prev_color == WHITE ? BLACK : WHITE;
+            ctx.beginPath();
+            ctx.rect(prev.x * 10, prev.y * 10, 10, 10);
+            ctx.fill();
+        };
+
+        let ant_turn = function (ant, direction) {
+            if (ant.dx != 0) {
+                ant.dy = direction * ant.dx;
+                ant.dx = 0;
+            } else {
+                ant.dx = -direction * ant.dy;
+                ant.dy = 0;
+            }
+        };
+    </script>
+</head>
+
+<body>
+    <canvas id="canv" width="2048px" height="1024px"></canvas>
+</body>
+
+</html>
