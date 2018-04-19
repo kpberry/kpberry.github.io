@@ -15,8 +15,13 @@
             run_ant(ctx);
         };
 
-        let run_ant = function(ctx) {
-            let ant = {'x': 100, 'y': 50, 'dx': -1, 'dy': 0};
+        let run_ant = function (ctx) {
+            let ant = {
+                'x': 100,
+                'y': 50,
+                'dx': -1,
+                'dy': 0
+            };
             let tape = [];
             for (let i = 0; i < 2048; i++) {
                 tape[i] = [];
@@ -28,7 +33,7 @@
             // while (true) {
             //     ant_step(ant, tape, ctx);
             // }
-            setInterval(function() {
+            setInterval(function () {
                 ant_step(ant, tape, ctx);
             }, 50);
         };
