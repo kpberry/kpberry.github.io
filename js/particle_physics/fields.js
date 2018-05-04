@@ -10,7 +10,7 @@ fields.base_field = function (source, calc_force_mag, visible) {
         return source.get_pos();
     };
 
-    var get_dist = function (target) {
+    self.get_dist = function (target) {
         var p1 = source.get_pos();
         var p2 = target.get_pos();
         return Math.max(1e-9, Math.sqrt(
@@ -20,7 +20,7 @@ fields.base_field = function (source, calc_force_mag, visible) {
         ));
     };
 
-    var get_dir = function (target, dist) {
+    self.get_dir = function (target, dist) {
         var p1 = source.get_pos();
         var p2 = target.get_pos();
         return [
@@ -31,22 +31,23 @@ fields.base_field = function (source, calc_force_mag, visible) {
     };
 
     self.calc_force = function (target) {
-        var dist = get_dist(target);
+        var dist = self.get_dist(target);
         var mag = calc_force_mag(target, dist);
-        var dir = get_dir(target, dist);
+        var dir = self.get_dir(target, dist);
         return [dir[0] * mag, dir[1] * mag, dir[2] * mag];
-    }
+    };
 
     self.display = function (ctx, target, stroke_style) {
         ctx.beginPath();
         ctx.strokeStyle = stroke_style || 'black';
-        var p1 = source.get_pos();
-        var p2 = target.get_pos();
+        var p1 = target.get_pos();
+        var force = self.calc_force(target);
+        var p2 = [p1[0] + force[0], p1[1] + force[1], p1[2] + force[2]];
         ctx.moveTo(p1[0], p1[1]);
         ctx.lineTo(p2[0], p2[1]);
         ctx.stroke();
         ctx.closePath();
-    }
+    };
 
     return self;
 }
@@ -69,17 +70,38 @@ fields.love = function (source) {
     }, false);
 };
 
-// fields.fluid = function (damping) {
-//     return {
-//         calc_force: function (particle, dist) {
-//             var vel = particle.get_vel();
-//             return -damping * Math.sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
-//         }
-//     }
-// };
+fields.drag = function (damping) {
+    var base = fields.base_field(undefined, function(target, dist) {
+        var v = target.get_vel();
+        return -damping * Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    }, false);
+
+    base.get_dist = function() {
+        return -1;
+    }
+
+    base.get_dir = function(target) {
+        return target.get_vel();
+    }
+
+    return base;
+};
 
 fields.spring = function (source, length, k) {
-    return fields.base_field(source, function (target, dist) {
+    var base = fields.base_field(source, function (target, dist) {
         return (length - dist) * k;
     }, true);
+
+    base.display = function (ctx, target, stroke_style) {
+        ctx.beginPath();
+        ctx.strokeStyle = stroke_style || 'black';
+        var p1 = source.get_pos();
+        var p2 = target.get_pos();
+        ctx.moveTo(p1[0], p1[1]);
+        ctx.lineTo(p2[0], p2[1]);
+        ctx.stroke();
+        ctx.closePath();
+    };
+
+    return base;
 };

@@ -1,4 +1,4 @@
-var particle_system = function (ctx, reduction) {
+var particle_system = function (ctx, reduction, width, height) {
     self = {};
 
     var particles = [];
@@ -21,7 +21,7 @@ var particle_system = function (ctx, reduction) {
     };
 
     self.act = function () {
-        ctx.clearRect(0, 0, 1000, 1000);
+        ctx.clearRect(0, 0, width || 1000, height || 1000);
         for (var p = 0; p < particles.length; p++) {
             particles[p].act(ctx, reduction);
         }

@@ -49,6 +49,7 @@ particles.particle = function (properties) {
 
     var prev_locs = [];
     var temp_pos = pos;
+    var temp_vel = vel;
 
     var color = 'rgb(' + Math.round(charge * 1e9) +
         ',' + Math.round(charm * 1e5) +
@@ -76,14 +77,16 @@ particles.particle = function (properties) {
     };
 
     var accelerate = function (reduction) {
+        temp_vel = vel;
         for (var i = 0; i < external_fields.length; i++) {
             var force = external_fields[i].calc_force(self);
-            vel = [
-                vel[0] + force[0] / mass,
-                vel[1] + force[1] / mass,
-                vel[2] + force[2] / mass
+            temp_vel = [
+                temp_vel[0] + force[0] / mass,
+                temp_vel[1] + force[1] / mass,
+                temp_vel[2] + force[2] / mass
             ];
         }
+        vel = temp_vel;
     };
 
     var move = function (reduction) {
@@ -97,7 +100,7 @@ particles.particle = function (properties) {
 
     var display = function (ctx) {
         var visual_size = particles.focal_length / pos[2] * size;
-        if (visual_size < 100 && visual_size > 0.5) {
+        if (visual_size < 100 && visual_size > 0.1) {
             ctx.strokeStyle = color;
             ctx.beginPath();
             ctx.arc(pos[0], pos[1], visual_size, 0, Math.PI * 2);
