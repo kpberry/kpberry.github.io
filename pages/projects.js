@@ -21,6 +21,27 @@ var projects = [{
         "res/spirals/8.png"
     ]
 }, {
+    "name": "C Utilities",
+    "link": {
+        "href": "https://github.com/kpberry/c-utils",
+        "text": "Github"
+    },
+    "info": [
+        "Various utility data structures written for C",
+        "Includes efficient and safe Hashmap, BST, and ArrayList implementations",
+        "Hashmap implementation runs 3 times as fast as Go's built in map on an insertion/deletion benchmark with billions of entries"
+    ]
+}, {
+    "name": "LC3 Simulator",
+    "link": {
+        "href": "https://github.com/kpberry/LC3",
+        "text": "Github"
+    }, 
+    "info": [
+        "Fully featured 2-pass assembler, disassembler, and simulator for the LC3 (Little Computer 3)",
+        "Includes implementations of all LC3 trap instructions except PUTSP"
+    ]
+}, {
     "name": "Particle Physics Engine",
     "link": {
         "href": "https://www.github.com/kpberry/physics-engine",
@@ -78,6 +99,18 @@ var projects = [{
     "info": [
         "Counts text features including sentences, characters, and syllables",
         "Analyzes text by several metrics, including Flesch-Reading ease, the Gunning Fog Index, and others to produce an average text \"grade level\""
+    ]
+}, {
+    "name": "Clapchat",
+    "link": {
+        "href": "https://github.com/kpberry/clapchat",
+        "text": "Github"
+    },
+    "info": [
+        "Command line app that takes a picture when the user claps (or snaps)",
+        "Uses a convolution of a Gaussian kernel over the raw audio signal to determine when a clap happens",
+        "Kernel parameters determined through exhaustive grid search over the space of offsets and magnitueds",
+        "Achieves 77% accuracy in clap identification when tested on a hand-made dataset of 350 miscellaneous noises and 350 claps",
     ]
 }, {
     "name": "Plaidify",
