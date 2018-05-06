@@ -2,14 +2,27 @@
 
 <head>
     <title>Readability</title>
+    <link href="styles/w3.css" rel="stylesheet" />
     <script src="res/syllable_counts.js" type="text/javascript"></script>
     <script src="js/readability.js" type="text/javascript"></script>
-    <link href="styles/w3css.css" rel="stylesheet" />
+    <script src="js/page.js"></script>
+    <script>
+        window.onload = function () {
+            var main = document.getElementById("main");
+            page.append_footer(main, "indigo");
+
+            var text = document.getElementById('text');
+            text.oninput = text.onpropertychange = function () {
+                readability.analyze(text.value);
+            };
+            readability.analyze("");
+        };
+    </script>
 </head>
 
 <body>
     <div class="w3-panel">
-        <div class="w3-card-4 w3-mobile">
+        <div class="w3-card-4 w3-mobile" id="main">
             <header class="w3-container w3-indigo w3-card-2">
                 <h3>Readability Score</h3>
             </header>
@@ -25,10 +38,6 @@
                     <table id="log" class="w3-container w3-table w3-white"></table>
                 </div>
             </div>
-
-            <footer class="w3-container w3-indigo">
-                <p>Brought to you by Kevin Berry.</p>
-            </footer>
         </div>
     </div>
 </body>

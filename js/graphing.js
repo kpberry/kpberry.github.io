@@ -1,7 +1,3 @@
-/**
- * Created by kpberry on 10/9/17.
- */
-
 var graphing = {};
 
 graphing.graph = function (target, fn_y, fn_x, xlim, ylim) {

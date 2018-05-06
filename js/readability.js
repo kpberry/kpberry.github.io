@@ -235,11 +235,3 @@ readability.automated_readability_index = function(words, letters, sentences) {
 readability.smog = function(complex_words, sentences) {
     return 1.043 * Math.sqrt(complex_words * 30.0 / sentences) + 3.1291;
 };
-
-window.onload = function() {
-    var text = document.getElementById('text');
-    text.oninput = text.onpropertychange = function() {
-        readability.analyze(text.value);
-    };
-    readability.analyze("");
-};
