@@ -1,7 +1,7 @@
 var talks = [{
     "name": "Intro to Secure Cryptography",
     "link": {
-        "href": "ttps://docs.google.com/presentation/d/1vOGB6qleJCOJqziWtwupg8KF5MdYpLC_WPsnyvKbyR0/edit?usp=sharing",
+        "href": "https://docs.google.com/presentation/d/1vOGB6qleJCOJqziWtwupg8KF5MdYpLC_WPsnyvKbyR0/edit?usp=sharing",
         "text": "Slides"
     },
     "info": [
