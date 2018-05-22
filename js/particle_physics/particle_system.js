@@ -1,5 +1,5 @@
 var particle_system = function (ctx, reduction, width, height) {
-    self = {};
+    var self = {};
 
     var particles = [];
     var springs = [];

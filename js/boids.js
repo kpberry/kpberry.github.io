@@ -2,7 +2,7 @@ window.onload = function () {
     var canv = document.getElementById('canv');
     canv.width = document.documentElement.clientWidth;
     canv.height = document.documentElement.clientHeight;
-    
+
     var numBoids = 500;
     var viewingRadius = 80;
     var cohesionCoefficient = 0.4;
@@ -10,7 +10,7 @@ window.onload = function () {
     var alignmentCoefficient = 0.02;
     var vMax = 5;
     var boidSize = 10;
-    
+
     var gameInstance = game(canv);
 
     gameInstance.setNumBoids(numBoids);
@@ -191,9 +191,15 @@ var game = function (canv) {
             var mag = Math.sqrt(vx * vx + vy * vy);
             var rot;
             if (mag == 0) {
-                rot = [[1, 0], [0, 1]];
+                rot = [
+                    [1, 0],
+                    [0, 1]
+                ];
             } else {
-                rot = [[vx / mag, -vy / mag], [vy / mag, vx / mag]];
+                rot = [
+                    [vx / mag, -vy / mag],
+                    [vy / mag, vx / mag]
+                ];
             }
 
             var r = matmul2x2by2x1(rot, right);
@@ -217,11 +223,12 @@ var game = function (canv) {
     };
 
     self.act = function () {
-        applyRules();
         drawBoids();
+        applyRules();
     };
 
     var applyRules = function () {
+        ctx.strokeStyle = '#224870';
         for (var i = 0; i < numBoids; i++) {
             var neighbors = [];
             for (var j = 0; j < numBoids; j++) {
@@ -230,6 +237,12 @@ var game = function (canv) {
                 var sqrDist = dx * dx + dy * dy;
                 if (sqrDist <= sqrViewingRadius && i !== j) {
                     neighbors.push(j);
+
+                    ctx.beginPath();
+                    ctx.moveTo(boids[i].x, boids[i].y);
+                    ctx.lineTo(boids[j].x, boids[j].y);
+                    ctx.closePath();
+                    ctx.stroke();
                 }
             }
 
