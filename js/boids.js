@@ -54,6 +54,10 @@ window.onload = function () {
         gameInstance.setBoidSize(evt.target.value);
     }, boidSize, 1, undefined, 1);
 
+    addToggle(menu, "Show Lines", function (evt) {
+        gameInstance.setShowLines(evt.target.checked);
+    }, false);
+
     window.addEventListener('resize', function () {
         resizeWindow(canv, gameInstance);
     }, false);
@@ -79,8 +83,7 @@ var addInput = function (ul, label, oninput, value, min, max, step) {
 
     var li = document.createElement('li');
     var labelDiv = document.createElement('div');
-    var inputDiv = document.createElement('div')
-    inputDiv.width = '50%';
+    var inputDiv = document.createElement('div');
 
     labelDiv.appendChild(labelElement);
     inputDiv.appendChild(input);
@@ -90,6 +93,28 @@ var addInput = function (ul, label, oninput, value, min, max, step) {
 
     ul.appendChild(li);
 };
+
+var addToggle = function (ul, label, oninput, value) {
+    var input = document.createElement('input');
+    input.id = label;
+    input.type = 'checkbox';
+    input.oninput = oninput;
+    input.value = value;
+
+    var labelElement = document.createElement('label');
+    labelElement.for = input.id;
+    labelElement.innerHTML = label;
+
+    var li = document.createElement('li');
+    var container = document.createElement('div');
+
+    container.appendChild(labelElement);
+    container.appendChild(input);
+    
+    li.appendChild(container);
+
+    ul.appendChild(li);
+}
 
 var resizeWindow = function (canv, gameInstance) {
     canv.width = document.documentElement.clientWidth;
@@ -110,6 +135,7 @@ var game = function (canv) {
     var alignmentCoefficient = 0.02;
     var vMax = 5;
     var boidSize = 10;
+    var showLines = false;
 
     var self = {};
 
@@ -141,6 +167,10 @@ var game = function (canv) {
         vMax = v;
     };
 
+    self.setShowLines = function (v) {
+        showLines = v;
+    };
+
     self.setNumBoids = function (n) {
         if (n > numBoids) {
             for (var i = numBoids; i < n; i++) {
@@ -152,7 +182,7 @@ var game = function (canv) {
                     ax: 0,
                     ay: 0,
                     id: i,
-                    neighbors: {}
+                    sector_coords: [-1, -1]
                 };
             }
         } else {
@@ -229,20 +259,55 @@ var game = function (canv) {
 
     var applyRules = function () {
         ctx.strokeStyle = '#224870';
+
+        if (viewingRadius <= 0) {
+            return;
+        }
+
+        var sectors = [];
+        for (var i = 0; i < numBoids; i++) {
+            var x = Math.round(boids[i].x / viewingRadius);
+            var y = Math.round(boids[i].y / viewingRadius);
+            if (sectors[x] == undefined) {
+                sectors[x] = [];
+            }
+            if (sectors[x][y] === undefined) {
+                sectors[x][y] = [i];
+            } else {
+                sectors[x][y].push(i);
+            }
+            boids[i].sector_coords = [x, y];
+        }
+
         for (var i = 0; i < numBoids; i++) {
             var neighbors = [];
-            for (var j = 0; j < numBoids; j++) {
-                var dx = (boids[j].x - boids[i].x);
-                var dy = (boids[j].y - boids[i].y);
-                var sqrDist = dx * dx + dy * dy;
-                if (sqrDist <= sqrViewingRadius && i !== j) {
-                    neighbors.push(j);
+            var sector_coords = boids[i].sector_coords;
+            var x = sector_coords[0];
+            var y = sector_coords[1];
+            for (var j = x - 1; j <= x + 1; j++) {
+                for (var k = y - 1; k <= y + 1; k++) {
+                    if (sectors[j] !== undefined &&
+                        sectors[j][k] !== undefined) {
+                        var sector = sectors[j][k];
 
-                    ctx.beginPath();
-                    ctx.moveTo(boids[i].x, boids[i].y);
-                    ctx.lineTo(boids[j].x, boids[j].y);
-                    ctx.closePath();
-                    ctx.stroke();
+                        for (var q = 0; q < sector.length; q++) {
+                            var b = sector[q];
+                            var dx = (boids[b].x - boids[i].x);
+                            var dy = (boids[b].y - boids[i].y);
+                            var sqrDist = dx * dx + dy * dy;
+                            if (sqrDist <= sqrViewingRadius && i !== b) {
+                                neighbors.push(b);
+
+                                if (showLines) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(boids[i].x, boids[i].y);
+                                    ctx.lineTo(boids[b].x, boids[b].y);
+                                    ctx.closePath();
+                                    ctx.stroke();
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -255,10 +320,12 @@ var game = function (canv) {
             boids[i].vx += boids[i].ax;
             boids[i].vy += boids[i].ay;
 
-            var v_mag = Math.sqrt(boids[i].vx * boids[i].vx + boids[i].vy * boids[i].vy);
+            var vx = boids[i].vx;
+            var vy = boids[i].vy;
+            var v_mag = Math.sqrt(vx * vx + vy * vy);
             if (v_mag > vMax) {
-                boids[i].vx = boids[i].vx / v_mag * vMax;
-                boids[i].vy = boids[i].vy / v_mag * vMax;
+                boids[i].vx = vx / v_mag * vMax;
+                boids[i].vy = vy / v_mag * vMax;
             }
 
             boids[i].x += boids[i].vx;
