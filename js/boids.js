@@ -10,6 +10,8 @@ window.onload = function () {
     var alignmentCoefficient = 0.02;
     var vMax = 5;
     var boidSize = 10;
+    var boidColor = '#224870';
+    var backgroundColor = '#EAEAEA';
 
     var gameInstance = game(canv);
 
@@ -20,6 +22,7 @@ window.onload = function () {
     gameInstance.setAlignmentCoefficient(alignmentCoefficient);
     gameInstance.setVMax(vMax);
     gameInstance.setBoidSize(boidSize);
+    gameInstance.setBoidColor(boidColor);
 
     setInterval(gameInstance.act, 20);
     resizeWindow(canv, gameInstance);
@@ -40,7 +43,7 @@ window.onload = function () {
 
     addInput(menu, "Alignment", function (evt) {
         gameInstance.setAlignmentCoefficient(evt.target.value);
-    }, 0.02, 0, undefined, 0.02);
+    }, alignmentCoefficient, 0, undefined, 0.02);
 
     addInput(menu, "Separation", function (evt) {
         gameInstance.setSeparationCoefficient(evt.target.value);
@@ -53,6 +56,14 @@ window.onload = function () {
     addInput(menu, "Boid Size", function (evt) {
         gameInstance.setBoidSize(evt.target.value);
     }, boidSize, 1, undefined, 1);
+
+    addColorInput(menu, "Boid Color", function (evt) {
+        gameInstance.setBoidColor(evt.target.value)
+    }, boidColor);
+
+    addColorInput(menu, "Background Color", function (evt) {
+        gameInstance.setBackgroundColor(evt.target.value)
+    }, backgroundColor);
 
     addToggle(menu, "Show Lines", function (evt) {
         gameInstance.setShowLines(evt.target.checked);
@@ -76,6 +87,30 @@ var addInput = function (ul, label, oninput, value, min, max, step) {
     input.oninput = oninput;
     input.value = value;
     input.step = step || 0.1;
+
+    var labelElement = document.createElement('label');
+    labelElement.for = input.id;
+    labelElement.innerHTML = label;
+
+    var li = document.createElement('li');
+    var labelDiv = document.createElement('div');
+    var inputDiv = document.createElement('div');
+
+    labelDiv.appendChild(labelElement);
+    inputDiv.appendChild(input);
+
+    li.appendChild(labelDiv);
+    li.appendChild(inputDiv);
+
+    ul.appendChild(li);
+};
+
+var addColorInput = function (ul, label, oninput, value) {
+    var input = document.createElement('input');
+    input.id = label;
+    input.type = 'color';
+    input.oninput = oninput;
+    input.value = value;
 
     var labelElement = document.createElement('label');
     labelElement.for = input.id;
@@ -133,6 +168,8 @@ var game = function (canv) {
     var cohesionCoefficient = 0.4;
     var separationCoefficient = 1;
     var alignmentCoefficient = 0.02;
+    var boidColor = '#224870';
+    var backgroundColor = '#EAEAEA';
     var vMax = 5;
     var boidSize = 10;
     var showLines = false;
@@ -171,6 +208,14 @@ var game = function (canv) {
         showLines = v;
     };
 
+    self.setBoidColor = function (v) {
+        boidColor = v;
+    }
+
+    self.setBackgroundColor = function (v) {
+        backgroundColor = v;
+    }
+
     self.setNumBoids = function (n) {
         if (n > numBoids) {
             for (var i = numBoids; i < n; i++) {
@@ -206,9 +251,9 @@ var game = function (canv) {
     };
 
     var drawBoids = function () {
-        ctx.fillStyle = '#EAEAEA';
+        ctx.fillStyle = backgroundColor;
         ctx.fillRect(0, 0, width, height);
-        ctx.fillStyle = '#224870';
+        ctx.fillStyle = boidColor;
         var right = [boidSize, 0];
         var top = [-boidSize / 2, -boidSize / 2];
         var bottom = [-boidSize / 2, boidSize / 2];
@@ -258,7 +303,7 @@ var game = function (canv) {
     };
 
     var applyRules = function () {
-        ctx.strokeStyle = '#224870';
+        ctx.strokeStyle = boidColor;
 
         if (viewingRadius <= 0) {
             return;
