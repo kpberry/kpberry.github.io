@@ -21,6 +21,18 @@ var projects = [{
         "res/spirals/8.png"
     ]
 }, {
+    "name": "Minimum Vertex Cover Algorithms",
+    "link": {
+        "href": "https://github.gatech.edu/kberry35/algos-project", 
+        "text": "Github"
+    }, 
+    "info": [
+        "Set of implementations of state of the art minimum vertex cover algorithms",
+        "Implements one branch and bound, two local search, and four approximation algorithms",
+        "Evaluates runtime and relative error of each algorithm on 11 real-world datasets with up to 14,000 vertices and 98,000 edges",
+        "Proposes and evaluates a novel greedy approximation algorithm which achieves smaller vertex cover sizes and significant time reductions over the state of the art FastVC algorithm on 10 out of 11 tested datasets"
+    ]
+}, {
     "name": "Ivan Allen Digital Archive Interface",
     "link": {
         "href": "http://allenarchive-dev.iac.gatech.edu/elasticsearch",
