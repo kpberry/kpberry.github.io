@@ -35,13 +35,12 @@ readability.clear_log = function () {
 };
 
 readability.analyze = function (str) {
-    str = str + ' ';
     var letters = readability.alphanum_count(str);
     var syllables = readability.syllable_count(str);
     var sentences = readability.sentence_count(str) || 1;
     var words = readability.word_count(str);
     var complex_words = readability.complex_word_count(str);
-    var gt3_syllable_words = readability.range_syllable_word_count(str, 3, 100);
+    var gt3_syllable_words = readability.range_syllable_word_count(str, 3, 10000);
 
     readability.clear_log();
 
@@ -84,41 +83,6 @@ readability.alphanum_count = function (str) {
     return count;
 };
 
-readability.simple_hash = function (str) {
-    var result = 1;
-    for (var i = 0; i < str.length; i++) {
-        result = (result * 31 + str.charCodeAt(i)) & 0xFFFFFFFF;
-    }
-    return result;
-};
-
-readability.syllable_count_in_word = function (str) {
-    var h = readability.simple_hash(str.toLowerCase());
-    if (h in syllable_counts) {
-        return syllable_counts[h];
-    } else {
-
-    }
-
-    var count = 0;
-    var vowel = 0;
-
-    for (var i = 0; i < str.length; i++) {
-        if (readability.is_vowel(str[i])) {
-            vowel = 1;
-        } else {
-            if (vowel) {
-                count += 1;
-            }
-            vowel = 0;
-        }
-    }
-
-    count = (vowel) ? count + 1 : count;
-    console.log('Unknown word: ' + str + '. Guessed syllables: ' + count);
-    return count;
-};
-
 readability.sentence_count = function (str) {
     var count = 0;
     var sentence = false;
@@ -139,57 +103,26 @@ readability.sentence_count = function (str) {
 };
 
 readability.word_count = function (str) {
-    var count = 0;
-    var word = 0;
-
-    for (var i = 0; i < str.length; i++) {
-        if (readability.is_letter(str[i])) {
-            word = 1;
-        } else if (word && str[i] !== '\'') {
-            count += 1;
-            word = 0;
-        }
-    }
-
-    return count;
+    return str.trim().replace(/[0-9.,\/#!?$%\^&\*;:{}=\-_`~()]/g, '').split(/\s+/g).length;
 };
 
 readability.complex_word_count = function (str) {
-    return readability.range_syllable_word_count(str, 3, 100);
+    return readability.range_syllable_word_count(str, 3, 10000);
 };
 
 readability.syllable_count = function (str) {
-    var count = 0;
-    var word = 0;
-    for (var i = 0; i < str.length; i++) {
-        if (readability.is_letter(str[i]) || str[i] === '\'') {
-            word += 1;
-        } else if (word && str[i] !== '\'') {
-            count += readability.syllable_count_in_word(str.substring(i - word, i));
-            word = 0;
-        }
-    }
-
-    return count;
+    return syllable_counter.getSyllableCount(str);
 };
 
 readability.range_syllable_word_count = function (str, low, up) {
-    var count = 0;
-    var word = 0;
-
-    for (var i = 0; i < str.length; i++) {
-        if (readability.is_letter(str[i]) || str[i] === '\'') {
-            word += 1;
-        } else if (word && str[i] !== '\'') {
-            var syllables = readability.syllable_count_in_word(str.substring(i - word, i));
-            if (syllables >= low && syllables <= up) {
-                count += 1;
-            }
-            word = 0;
+    var total = 0;
+    var counts = syllable_counter.getSyllableCounts(str);
+    for (var i = 0; i < counts.length; i++) {
+        if (counts[i] >= low && counts[i] <= up) {
+            total++;
         }
     }
-
-    return count;
+    return total;
 };
 
 readability.is_vowel = function (c) {
