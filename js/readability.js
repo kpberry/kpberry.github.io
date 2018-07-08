@@ -86,14 +86,18 @@ readability.alphanumCount = function (str) {
     return str.replace(/\W/g, '').length;
 };
 
-readability.sentenceCount = function (str) {
-    return str.split(/[.?!]\s*/g)
-        .filter(function (s) { return s.search(/[a-zA-Z]/) >= 0; }).length;
-};
+readability.getWords = function (str) {
+    return str.replace(/'/g, '').split(/\W+/g)
+        .filter(function (w) { return w.search(/[a-zA-Z]/) >= 0; });
+}
 
 readability.wordCount = function (str) {
-    return str.trim().replace(/'/g, '').split(/\W+/g)
-        .filter(function (w) { return w.search(/[a-zA-Z]/) >= 0; }).length;
+    return readability.getWords(str).length;
+};
+
+readability.sentenceCount = function (str) {
+    return str.split(/[.?!]\s*/g)
+        .filter(function (s) { return readability.wordCount(s) > 0; }).length;
 };
 
 readability.complexWordCount = function (str) {
@@ -139,10 +143,10 @@ readability.getSyllableCountForWord = function (word) {
 }
 
 readability.getSyllableCounts = function (text) {
-    var splitText = text.replace(/[0-9.,\/#!?$%\^&\*;:{}=\-_`~()]/g, '').trim().split(/\s+/g);
+    var words = readability.getWords(text);
     var counts = [];
-    for (var i = 0; i < splitText.length; i++) {
-        counts.push(readability.getSyllableCountForWord(splitText[i]));
+    for (var i = 0; i < words.length; i++) {
+        counts.push(readability.getSyllableCountForWord(words[i]));
     }
     return counts;
 }
