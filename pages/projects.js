@@ -54,7 +54,7 @@ var projects = [{
     },
     "info": [
         "Counts text features including sentences, characters, and syllables",
-        "Uses an MLP regressor with 10 hidden neurons to count syllables for out-of-vocabulary words. Trained on over 130,000 English words, and achieves over 92% validation accuracy on a held out test set of 4,000 words",
+        "Uses an MLP regressor with 10 hidden neurons to count syllables for out-of-vocabulary words. [Trained on over 130,000 English words, and achieves over 89% validation accuracy on a held out test set of 1,300 words](https://kpberry.github.io/syllable_counter.html)",
         "Correctly predicts syllable counts for very long out-of-vocabulary words, e.g., supercalifragilisticexpialidocious (14 syllables), floccinaucinihilipilification (12 syllables), and pneumonoultramicroscopicsilicovolcanoconiosis (18 syllables), despite having only 2 training examples with more than 9 syllables",
         "Capable of analyzing large corpuses such as Tolstoy's <i>War and Peace</i> in under 10 seconds",
         "Analyzes text by several metrics, including Flesch-Reading ease, the Gunning Fog Index, and others to produce an average text \"grade level\""
