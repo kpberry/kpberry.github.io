@@ -51,7 +51,12 @@ accordion.add_card = function (card_data, accordion_element, color) {
     info.classList.add("w3-ul", "w3-hide");
     for (var i = 0; i < card_data["info"].length; i++) {
         var info_li = document.createElement("li");
-        info_li.innerHTML = card_data["info"][i];
+        var info_text = card_data["info"][i];
+        info_text = info_text.replace(
+            /\[(.*?)\]\((.*?)\)/g, 
+            '<a href="$2" target="_blank" class="w3-hover-text-' + color + '">$1</a>'
+        );
+        info_li.innerHTML = info_text;
         info.appendChild(info_li);
     }
 

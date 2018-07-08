@@ -30,7 +30,7 @@ var projects = [{
         "Set of implementations of state of the art minimum vertex cover algorithms",
         "Implements one branch and bound, two local search, and four approximation algorithms",
         "Evaluates runtime and relative error of each algorithm on 11 real-world datasets with up to 14,000 vertices and 98,000 edges",
-        "Proposes and evaluates a novel greedy approximation algorithm which achieves smaller vertex cover sizes and significant time reductions over the state of the art FastVC algorithm on 10 out of 11 tested datasets"
+        "Proposes and evaluates a novel greedy approximation algorithm which achieves smaller vertex cover sizes and significant time reductions over the state of the art [Fast VC](http://ijcai.org/Proceedings/15/Papers/111.pdf) algorithm on 10 out of 11 tested datasets"
     ]
 }, {
     "name": "Ivan Allen Digital Archive Interface",
@@ -40,11 +40,11 @@ var projects = [{
     },
     "info": [
         "Search interface, graph visualization, and wiki-style transcription editing for the Ivan Allen Digital Archive, a repository of documents from the mayorship of Ivan Allen",
-        "Uses an elasticsearch database for performing efficient fuzzy searches through document collection",
+        "Uses an [elasticsearch](https://www.elastic.co/) database for performing efficient fuzzy searches through document collection",
         "Graph visualization allows for complex boolean searches and filters to be displayed visually, e.g., \"Find all documents connecting Cecil Alexander and Ivan Allen in 1967\" can be evaluated with 3 filters from dropdown menus",
-        "Used Google's Tesseract optical character recognition engine to extract text from over 10,000 PDF scans of documents",
-        "Used spaCy NLP to generate named entity tags which are used for searching and for connecting nodes in the graph visualization",
-        "Uses a modified version of the Scripto Omeka plugin to allow for crowdsourced transcription corrections"
+        "Used Google's [Tesseract](https://github.com/tesseract-ocr/tesseract) optical character recognition engine to extract text from over 10,000 PDF scans of documents",
+        "Used [spaCy](https://spacy.io/) NLP to generate named entity tags which are used for searching and for connecting nodes in the graph visualization",
+        "Uses a modified version of the [Scripto](https://omeka.org/classic/docs/Plugins/Scripto/) [Omeka](https://omeka.org/) plugin to allow for crowdsourced transcription corrections"
     ]
 }, {
     "name": "Readability Analyzer",
@@ -77,7 +77,7 @@ var projects = [{
         "text": "Github"
     }, 
     "info": [
-        "Fully featured 2-pass assembler, disassembler, and simulator for the LC3 (Little Computer 3)",
+        "Fully featured 2-pass assembler, disassembler, and simulator for the [LC3](https://en.wikipedia.org/wiki/LC-3) (Little Computer 3)",
         "Includes implementations of all LC3 trap instructions except PUTSP"
     ]
 }, {
@@ -148,7 +148,7 @@ var projects = [{
         "text": "Web App"
     },
     "info": [
-        "Implementation of Craig Reynolds's Boids (bird-oid objects) flocking algorithm",
+        "Implementation of Craig Reynolds's [Boids](http://www.red3d.com/cwr/boids/) (bird-oid objects) flocking algorithm",
         "Has menu for tuning flock parameters such as cohesion, alignment, separation, velocity, and viewing radius",
         "Uses an optimized space partitioning algorithm for neighbor detection which allows for flocks with over 10000 individuals",
         "Includes visualization of boid sight lines"
