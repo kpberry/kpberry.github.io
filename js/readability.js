@@ -1,20 +1,27 @@
 var readability = {};
 
-readability.log_row_count = 0;
+readability.logRowCount = 0;
+readability.syllableCache = {};
 
-readability.log_value = function (title, value, color) {
+readability.logValue = function (title, value, type, color) {
     var log = document.getElementById('log');
 
-    var row = log.insertRow(readability.log_row_count);
+    var row = log.insertRow(readability.logRowCount);
     var titleCell = row.insertCell(0);
     var valueCell = row.insertCell(1);
 
     titleCell.innerHTML = title;
-    if (typeof (value) === 'number') {
-        if (isNaN(value)) {
-            value = 0;
+    if (type === 'float') {
+        if (isNaN(value) || !isFinite(value)) {
+            value = '';
         } else {
             value = value.toFixed(1);
+        }
+    } else if (type === 'int') {
+        if (isNaN(value) || !isFinite(value)) {
+            value = '';
+        } else {
+            value = Math.round(value);
         }
     }
     valueCell.innerHTML = value;
@@ -23,150 +30,239 @@ readability.log_value = function (title, value, color) {
         titleCell.classList.add('w3-text-indigo');
     }
 
-    readability.log_row_count += 1;
+    readability.logRowCount += 1;
 };
 
-readability.clear_log = function () {
+readability.clearLog = function () {
     var log = document.getElementById('log');
     while (log.firstChild) {
         log.removeChild(log.firstChild);
     }
-    readability.log_row_count = 0;
+    readability.logRowCount = 0;
 };
 
 readability.analyze = function (str) {
-    var letters = readability.alphanum_count(str);
-    var syllables = readability.syllable_count(str);
-    var sentences = readability.sentence_count(str) || 1;
-    var words = readability.word_count(str);
-    var complex_words = readability.complex_word_count(str);
-    var gt3_syllable_words = readability.range_syllable_word_count(str, 3, 10000);
+    var letters = readability.alphanumCount(str);
+    var syllables = readability.syllableCount(str);
+    var sentences = readability.sentenceCount(str);
+    var words = readability.wordCount(str);
+    var complexWords = readability.complexWordCount(str);
+    var gt3SyllableWords = readability.greaterThanNSyllableWordCount(str, 3);
 
-    readability.clear_log();
+    readability.clearLog();
 
-    readability.log_value('Flesch Reading ease',
-        readability.flesch_reading_ease(words, sentences, syllables));
-    readability.log_value('Automated Readability Index',
-        readability.automated_readability_index(words, letters, sentences));
+    var fre = readability.fleschReadingEase(words, sentences, syllables);
+    var ari = readability.automatedReadabilityIndex(words, letters, sentences);
 
-    readability.log_value('', '');
+    readability.logValue('Flesch Reading ease', fre, 'float');
+    readability.logValue('Automated Readability Index', ari, 'float');
 
-    var fgl = readability.flesch_grade_level(words, sentences, syllables);
-    var gfi = readability.gunning_fog_index(words, sentences, complex_words);
-    var cli = readability.coleman_liau_index(words, letters, sentences);
-    var s = readability.smog(gt3_syllable_words, sentences);
+    readability.logValue('', '');
 
-    readability.log_value('Flesch-Kincaid Grade Level', fgl);
-    readability.log_value('Gunning Fog Index', gfi);
-    readability.log_value('Coleman-Liau Index', cli);
-    readability.log_value('SMOG', s);
-    readability.log_value('Average Grade Level', (fgl + gfi + cli + s) / 4.0, true);
+    var fgl = readability.fleschGradeLevel(words, sentences, syllables);
+    var gfi = readability.gunningFogIndex(words, sentences, complexWords);
+    var cli = readability.colemanLiauIndex(words, letters, sentences);
+    var s = readability.smog(gt3SyllableWords, sentences);
 
-    readability.log_value('', '');
+    var average = (fgl + gfi + cli + s) / 4.0;
 
-    readability.log_value('Letters', letters);
-    readability.log_value('Syllables', syllables);
-    readability.log_value('Sentences', sentences);
-    readability.log_value('Words', words);
-    readability.log_value('Complex words', complex_words);
-    readability.log_value('3 or More Syllable Words', gt3_syllable_words);
+    readability.logValue('Flesch-Kincaid Grade Level', fgl, 'float');
+    readability.logValue('Gunning Fog Index', gfi, 'float');
+    readability.logValue('Coleman-Liau Index', cli, 'float');
+    readability.logValue('SMOG', s, 'float');
+    readability.logValue('Average Grade Level', average, 'float', true);
+
+    readability.logValue('', '');
+
+    readability.logValue('Letters', letters, 'int');
+    readability.logValue('Syllables', syllables, 'int');
+    readability.logValue('Sentences', sentences, 'int');
+    readability.logValue('Words', words, 'int');
+    readability.logValue('Complex words', complexWords, 'int');
+    readability.logValue('3 or More Syllable Words', gt3SyllableWords, 'int');
 };
 
-readability.alphanum_count = function (str) {
-    var count = 0;
-    for (var i = 0; i < str.length; i++) {
-        if (readability.is_letter(str[i]) || readability.is_num(str[i])) {
-            count += 1;
+readability.alphanumCount = function (str) {
+    return str.replace(/\W/g, '').length;
+};
+
+readability.sentenceCount = function (str) {
+    return str.split(/[.?!]\s*/g)
+        .filter(function (s) { return s.search(/[a-zA-Z]/) >= 0; }).length;
+};
+
+readability.wordCount = function (str) {
+    return str.trim().replace(/'/g, '').split(/\W+/g)
+        .filter(function (w) { return w.search(/[a-zA-Z]/) >= 0; }).length;
+};
+
+readability.complexWordCount = function (str) {
+    return readability.greaterThanNSyllableWordCount(str, 3);
+};
+
+readability.getWindows = function (sequence, windowSizes) {
+    var result = [];
+    for (var w = windowSizes[0]; w < windowSizes[1] + 1; w++) {
+        for (var i = 0; i < sequence.length - (w - 1); i++) {
+            result.push(sequence.slice(i, i + w));
         }
     }
+    return result;
+}
 
-    return count;
-};
-
-readability.sentence_count = function (str) {
-    var count = 0;
-    var sentence = false;
-    var len = str.length;
-
-    for (var i = 0; i < len; i++) {
-        if (sentence && readability.is_terminator(str[i])) {
-            if (!(i > 0 && readability.is_num(str[i - 1]) && i < len - 1 && readability.is_num(str[i + 1]))) {
-                count += 1;
-                sentence = false;
-            }
-        } else if (readability.is_letter(str[i]) || readability.is_num(str[i])) {
-            sentence = true;
+readability.toOneHot = function (word, mapping) {
+    var result = new Array(Object.keys(mapping).length).fill(0);
+    var windows = readability.getWindows(word.toLowerCase(), [1, 2])
+    for (var i = 0; i < windows.length; i++) {
+        if (mapping[windows[i]] !== undefined) {
+            result[mapping[windows[i]]]++;
         }
     }
+    return result;
+}
 
-    return count + (sentence ? 1 : 0);
-};
+readability.getSyllableCountForWord = function (word) {
+    if (readability.syllableCache[word] === undefined) {
+        var mlp = new readability.MLPRegressor(
+            'relu',
+            syllable_counter_vars.layers,
+            syllable_counter_vars.weights,
+            syllable_counter_vars.bias
+        );
+        var features = readability.toOneHot(
+            word, syllable_counter_vars.mapping
+        );
+        var count = Math.max(Math.round(mlp.predict(features)), 1);
+        readability.syllableCache[word] = count;
+    }
+    return readability.syllableCache[word];
+}
 
-readability.word_count = function (str) {
-    return str.trim().replace(/[0-9.,\/#!?$%\^&\*;:{}=\-_`~()]/g, '').split(/\s+/g).length;
-};
+readability.getSyllableCounts = function (text) {
+    var splitText = text.replace(/[0-9.,\/#!?$%\^&\*;:{}=\-_`~()]/g, '').trim().split(/\s+/g);
+    var counts = [];
+    for (var i = 0; i < splitText.length; i++) {
+        counts.push(readability.getSyllableCountForWord(splitText[i]));
+    }
+    return counts;
+}
 
-readability.complex_word_count = function (str) {
-    return readability.range_syllable_word_count(str, 3, 10000);
-};
-
-readability.syllable_count = function (str) {
-    return syllable_counter.getSyllableCount(str);
-};
-
-readability.range_syllable_word_count = function (str, low, up) {
+readability.syllableCount = function (text) {
     var total = 0;
-    var counts = syllable_counter.getSyllableCounts(str);
+    var counts = readability.getSyllableCounts(text);
     for (var i = 0; i < counts.length; i++) {
-        if (counts[i] >= low && counts[i] <= up) {
-            total++;
-        }
+        total += counts[i];
     }
     return total;
+}
+
+readability.greaterThanNSyllableWordCount = function (str, n) {
+    return readability.getSyllableCounts(str)
+        .filter(function (c) { return c >= n; }).length;
 };
 
-readability.is_vowel = function (c) {
-    c = readability.to_lower(c);
-    return c === 'a' || c === 'e' || c === 'i' || c === 'o' || c === 'u' || c === 'y';
-};
-
-readability.is_num = function (c) {
-    return c >= '0' && c <= '9';
-};
-
-
-readability.is_terminator = function (c) {
-    return c === '.' || c === '!' || c === '?' || c === '\n';
-};
-
-readability.is_letter = function (c) {
-    return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';
-};
-
-readability.to_lower = function (c) {
-    return (c <= 'Z') ? c + 32 : c;
-};
-
-readability.flesch_reading_ease = function (words, sentences, syllables) {
+readability.fleschReadingEase = function (words, sentences, syllables) {
     return 206.835 - 1.015 * words / sentences - 84.6 * syllables / words;
 };
 
-readability.flesch_grade_level = function (words, sentences, syllables) {
+readability.fleschGradeLevel = function (words, sentences, syllables) {
     return 0.39 * words / sentences + 11.8 * syllables / words - 15.59;
 };
 
-readability.gunning_fog_index = function (words, sentences, complex_words) {
+readability.gunningFogIndex = function (words, sentences, complex_words) {
     return 0.4 * (words / sentences + 100.0 * complex_words / words);
 };
 
-readability.coleman_liau_index = function (words, letters, sentences) {
+readability.colemanLiauIndex = function (words, letters, sentences) {
     return 5.88 * letters / words - 29.6 * sentences / words - 15.8;
 };
 
-readability.automated_readability_index = function (words, letters, sentences) {
+readability.automatedReadabilityIndex = function (words, letters, sentences) {
     return 4.71 * letters / words + 0.5 * words / sentences - 21.43;
 };
 
-readability.smog = function (complex_words, sentences) {
-    return 1.043 * Math.sqrt(complex_words * 30.0 / sentences) + 3.1291;
+readability.smog = function (complexWords, sentences) {
+    return 1.043 * Math.sqrt(complexWords * 30.0 / sentences) + 3.1291;
+};
+
+readability.MLPRegressor = function (hidden, layers, weights, bias) {
+
+    this.hidden = hidden.toUpperCase();
+    this.network = new Array(layers.length + 1);
+    for (var i = 0, l = layers.length; i < l; i++) {
+        this.network[i + 1] = new Array(layers[i]).fill(0.);
+    }
+    this.weights = weights;
+    this.bias = bias;
+
+    var compute = function (activation, v, nLayers) {
+        switch (activation) {
+            case 'LOGISTIC':
+                if (nLayers > 1) {
+                    for (var i = 0, l = v.length; i < l; i++) {
+                        v[i] = 1. / (1. + Math.exp(-v[i]));
+                    }
+                } else {
+                    for (var i = 0, l = v.length; i < l; i++) {
+                        if (v[i] > 0) {
+                            v[i] = -Math.log(1. + Math.exp(-v[i]));
+                        } else {
+                            v[i] = v[i] - Math.log(1. + Math.exp(-v[i]));
+                        }
+                    }
+                }
+                break;
+            case 'RELU':
+                for (var i = 0, l = v.length; i < l; i++) {
+                    v[i] = Math.max(0, v[i]);
+                }
+                break;
+            case 'TANH':
+                for (var i = 0, l = v.length; i < l; i++) {
+                    v[i] = Math.tanh(v[i]);
+                }
+                break;
+            case 'SOFTMAX':
+                var max = Number.NEGATIVE_INFINITY;
+                for (var i = 0, l = v.length; i < l; i++) {
+                    if (v[i] > max) {
+                        max = v[i];
+                    }
+                }
+                for (var i = 0, l = v.length; i < l; i++) {
+                    v[i] = Math.exp(v[i] - max);
+                }
+                var sum = 0.0;
+                for (var i = 0, l = v.length; i < l; i++) {
+                    sum += v[i];
+                }
+                for (var i = 0, l = v.length; i < l; i++) {
+                    v[i] /= sum;
+                }
+                break;
+        }
+        return v;
+    };
+
+    this.predict = function (neurons) {
+        this.network[0] = neurons;
+
+        for (var i = 0; i < this.network.length - 1; i++) {
+            for (var j = 0; j < this.network[i + 1].length; j++) {
+                for (var l = 0; l < this.network[i].length; l++) {
+                    this.network[i + 1][j] += this.network[i][l] * this.weights[i][l][j];
+                }
+                this.network[i + 1][j] += this.bias[i][j];
+            }
+            if ((i + 1) < (this.network.length - 1)) {
+                this.network[i + 1] = compute(this.hidden, this.network[i + 1], this.network.length);
+            }
+        }
+
+        if (this.network[this.network.length - 1].length > 1) {
+            return this.network[this.network.length - 1];
+        }
+        return this.network[this.network.length - 1][0];
+    };
+
 };
