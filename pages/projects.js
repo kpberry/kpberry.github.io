@@ -21,6 +21,20 @@ var projects = [{
         "res/spirals/8.png"
     ]
 }, {
+    "name": "Ivan Allen Digital Archive Interface",
+    "link": {
+        "href": "http://allenarchive-dev.iac.gatech.edu/elasticsearch",
+        "text": "Website"
+    },
+    "info": [
+        "Search interface, graph visualization, and wiki-style transcription editing for the Ivan Allen Digital Archive, a repository of documents from the mayorship of Ivan Allen",
+        "Uses an elasticsearch database for performing efficient fuzzy searches through document collection",
+        "Graph visualization allows for complex boolean searches and filters to be displayed visually, e.g., \"Find all documents connecting Cecil Alexander and Ivan Allen in 1967\" can be evaluated with 3 filters from dropdown menus",
+        "Used Google's Tesseract optical character recognition engine to extract text from over 10,000 PDF scans of documents",
+        "Used spaCy NLP to generate named entity tags which are used for searching and for connecting nodes in the graph visualization",
+        "Uses a modified version of the Scripto Omeka plugin to allow for crowdsourced transcription corrections"
+    ]
+}, {   
     "name": "C Utilities",
     "link": {
         "href": "https://github.com/kpberry/c-utils",
