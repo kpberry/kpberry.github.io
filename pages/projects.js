@@ -113,6 +113,18 @@ var projects = [{
         "Achieves 77% accuracy in clap identification when tested on a hand-made dataset of 350 miscellaneous noises and 350 claps",
     ]
 }, {
+    "name": "Boids",
+    "link": {
+        "href": "https://kpberry.github.io/boids.html",
+        "text": "Web App"
+    },
+    "info": [
+        "Implementation of Craig Reynolds's Boids (bird-oid objects) flocking algorithm",
+        "Has menu for tuning flock parameters such as cohesion, alignment, separation, velocity, and viewing radius",
+        "Uses an optimized space partitioning algorithm for neighbor detection which allows for flocks with over 10000 individuals",
+        "Includes visualization of boid sight lines"
+    ]
+}, {
     "name": "Plaidify",
     "link": {
         "href": "plaidify.html",
