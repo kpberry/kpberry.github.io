@@ -2,7 +2,7 @@ var accordion = {};
 
 accordion.toggle_card = function (outer, inner) {
     inner.classList.toggle("w3-show");
-    outer.classList.toggle("w3-card-2");
+    // outer.classList.toggle("w3-card-2");
     outer.classList.toggle("w3-margin-bottom");
 };
 

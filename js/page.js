@@ -30,7 +30,7 @@ page.footer_links = [{
 
 page.prepend_navigation = function (parent, color) {
     var nav = document.createElement("nav");
-    nav.classList.add("w3-bar", "w3-" + color, "w3-card-2");
+    nav.classList.add("w3-bar", "w3-" + color); // , "w3-card-2");
 
     for (var i = 0; i < page.nav_links.length; i++) {
         var link = document.createElement("a");
