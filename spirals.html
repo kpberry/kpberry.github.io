@@ -1,0 +1,53 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/w3.css" />
+    <script src="js/page.js" type="text/javascript"></script>
+    <script src="js/spirals.js" type="text/javascript"></script>
+    <script>
+        window.onload = function () {
+            drawSpiral(50000);
+        };
+
+        var drawSpiral = function () {
+            coloredValues = document.getElementById('coloredValues').value;
+            coloredValues = coloredValues.split(/,?\s+/g).map(function (i) {
+                return parseInt(i, 10);
+            }).filter(function (i) {
+                return !Number.isNaN(i);
+            });
+            var maxValue = Math.max(...coloredValues);
+            console.log(maxValue);
+            coloredValues = new Set(coloredValues);
+
+            var values = [];
+            var colors = [];
+
+            var valueIndex = 0;
+            for (var i = 0; i <= maxValue; i++) {
+                values.push(i);
+                if (coloredValues.has(i)) {
+                    colors.push('black');
+                    valueIndex += 1;
+                } else {
+                    colors.push('white');
+                }
+            }
+            var canv = document.getElementById('canv');
+            canv.width = document.documentElement.clientWidth;
+            canv.height = document.documentElement.clientHeight;
+            var ctx = canv.getContext("2d");
+
+            var spiral = spirals.hexSpiral(values, colors, canv.width / 2, canv.height / 2, 10);
+            // var spiral = spirals.squareSpiral(values, colors, canv.width / 2, canv.height / 2, 10);
+            spiral.draw(ctx);
+        };
+    </script>
+</head>
+
+<body>
+<input type="text" id="coloredValues" oninput="drawSpiral()" style="position: fixed; width: 100%;", value="0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765"/>
+<canvas id="canv" width=0 height=0></canvas>
+</body>
+
+</html>
