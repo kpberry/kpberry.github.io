@@ -23,7 +23,7 @@ var projects = [{
 }, {
     "name": "Minimum Vertex Cover Algorithms",
     "link": {
-        "href": "https://github.gatech.edu/kberry35/algos-project", 
+        "href": "https://github.com/kpberry/minimum-vertex-cover-algorithms", 
         "text": "Github"
     }, 
     "info": [
