@@ -63,3 +63,33 @@ plaidify._plaidify = function(source, plaid, threshold, plaidIntensity) {
 
     return sourceData;
 };
+
+plaidify._discrete_convolve_2d = function (data, kernel) {
+    let [kernel_width, kernel_height] = [kernel[0].length, kernel.length];
+    let [data_width, data_height] = [data[0].length, data.length];
+
+    let [kernel_col_offset, kernel_row_offset] = [(kernel_width - 1) / 2, (kernel_height - 1) / 2];
+
+    let result = [];
+    for (let r = 0; r < data_height; r++) {
+        let row = [];
+        for (let c = 0; c < data_width; c++) {
+            let total = 0;
+            for (let kr = 0; kr < kernel_height; kr++) {
+                for (let kc = 0; kc < kernel_width; kc++) {
+                    let dr = r + kr - kernel_row_offset;
+                    let dc = c + kc - kernel_col_offset
+
+                    if (dr >= 0 && dr < data_height && dc >= 0 && dc < data_width) {
+                        total += kernel[kr][kc] * data[dr][dc];
+                    }
+                }
+            }
+
+            row.push(total);
+        }
+        result.push(row);
+    }
+
+    return result;
+}
