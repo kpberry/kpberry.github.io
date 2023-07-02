@@ -52,20 +52,6 @@ var projects = [{
         "Proposes and evaluates a novel greedy approximation algorithm which achieves smaller vertex cover sizes and significant time reductions over the state of the art [Fast VC](http://ijcai.org/Proceedings/15/Papers/111.pdf) algorithm on 10 out of 11 tested datasets"
     ]
 }, {
-    "name": "Ivan Allen Digital Archive Interface",
-    "link": {
-        "href": "http://allenarchive-dev.iac.gatech.edu/elasticsearch",
-        "text": "Website"
-    },
-    "info": [
-        "Search interface, graph visualization, and wiki-style transcription editing for the Ivan Allen Digital Archive, a repository of documents from the mayorship of Ivan Allen",
-        "Uses an [elasticsearch](https://www.elastic.co/) database for performing efficient fuzzy searches through document collection",
-        "Graph visualization allows for complex boolean searches and filters to be displayed visually, e.g., \"Find all documents connecting Cecil Alexander and Ivan Allen in 1967\" can be evaluated with 3 filters from dropdown menus",
-        "Used Google's [Tesseract](https://github.com/tesseract-ocr/tesseract) optical character recognition engine to extract text from over 10,000 PDF scans of documents",
-        "Used [spaCy](https://spacy.io/) NLP to generate named entity tags which are used for searching and for connecting nodes in the graph visualization",
-        "Uses a modified version of the [Scripto](https://omeka.org/classic/docs/Plugins/Scripto/) [Omeka](https://omeka.org/) plugin to allow for crowdsourced transcription corrections"
-    ]
-}, {
     "name": "Readability Analyzer",
     "link": {
         "href": "readability.html",
@@ -181,5 +167,20 @@ var projects = [{
     "info": [
         "Takes a foreground image and a cropped background plaid and produces a plaid interpolation of the two",
         "Uses the grayscale of the original image and a threshold intensity to determine the \"plaidness\" of a pixel in the final image to ensure the maintenance of edges and clearly defined shapes"
+    ]
+}, {
+    "name": "Ivan Allen Digital Archive Interface",
+    "link": {
+        "href": "http://allenarchive-dev.iac.gatech.edu/elasticsearch",
+        "text": "Website"
+    },
+    "info": [
+        "<b>NOTE:</b> <i> I worked on this project in 2018 and it has since been passed off to new maintainers. The site has often been broken or unavailable since they have been working on it, so it may not work for you if you try to go there.</i>",
+        "Search interface, graph visualization, and wiki-style transcription editing for the Ivan Allen Digital Archive, a repository of documents from the mayorship of Ivan Allen",
+        "Uses an [elasticsearch](https://www.elastic.co/) database for performing efficient fuzzy searches through document collection",
+        "Graph visualization allows for complex boolean searches and filters to be displayed visually, e.g., \"Find all documents connecting Cecil Alexander and Ivan Allen in 1967\" can be evaluated with 3 filters from dropdown menus",
+        "Used Google's [Tesseract](https://github.com/tesseract-ocr/tesseract) optical character recognition engine to extract text from over 10,000 PDF scans of documents",
+        "Used [spaCy](https://spacy.io/) NLP to generate named entity tags which are used for searching and for connecting nodes in the graph visualization",
+        "Uses a modified version of the [Scripto](https://omeka.org/classic/docs/Plugins/Scripto/) [Omeka](https://omeka.org/) plugin to allow for crowdsourced transcription corrections"
     ]
 }];
