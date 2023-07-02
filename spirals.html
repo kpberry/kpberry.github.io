@@ -6,7 +6,8 @@
     <script src="js/spirals.js" type="text/javascript"></script>
     <script>
         window.onload = function () {
-            drawSpiral(50000);
+            drawSpiral();
+            console.log('done');
         };
 
         var drawSpiral = function () {
@@ -34,8 +35,10 @@
                 }
             }
             var canv = document.getElementById('canv');
-            canv.width = document.documentElement.clientWidth;
-            canv.height = document.documentElement.clientHeight;
+            let width  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            let height = window.innerHeight|| document.documentElement.clientHeight || document.body.clientHeight;
+            canv.width = width;
+            canv.height = height;
             var ctx = canv.getContext("2d");
 
             var spiral = spirals.hexSpiral(values, colors, canv.width / 2, canv.height / 2, 10);
