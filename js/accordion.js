@@ -7,16 +7,6 @@ accordion.toggle_card = function (outer, inner) {
 };
 
 accordion.add_slideshow_to_card_info = function (card_data, info, color) {
-    var images = document.createElement("li");
-    for (var i = 0; i < card_data["images"].length; i++) {
-        var image = document.createElement("img");
-        image.src = card_data["images"][i];
-        image.style.width = "100%";
-        image.style.display = i === 0 ? "block" : "none";
-        images.appendChild(image);
-    }
-    info.appendChild(images);
-
     var cur_image = 0;
     var left_button = document.createElement('button');
     left_button.onclick = function () {
@@ -38,6 +28,16 @@ accordion.add_slideshow_to_card_info = function (card_data, info, color) {
 
     info.appendChild(left_button);
     info.appendChild(right_button);
+
+    var images = document.createElement("li");
+    for (var i = 0; i < card_data["images"].length; i++) {
+        var image = document.createElement("img");
+        image.src = card_data["images"][i];
+        image.style.width = "100%";
+        image.style.display = i === 0 ? "block" : "none";
+        images.appendChild(image);
+    }
+    info.appendChild(images);
 };
 
 accordion.add_card = function (card_data, accordion_element, color) {
