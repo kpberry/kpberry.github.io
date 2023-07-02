@@ -1,4 +1,23 @@
 var projects = [{
+    "name": "image-to-ascii",
+    "link": {
+        "href": "https://github.com/kpberry/image-to-ascii",
+        "text": "Github"
+    }, 
+    "info": [
+        "Converts images and gifs to ascii art",
+        "Capable of converting 120+ images per second on a single thread",
+        "Supports multiple input/output formats, custom fonts, alphabets, character selection metrics, and multithreading",
+        "Uses hand-coded SIMD instructions for improved performance"
+    ],
+    "images": [
+        "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/you_know_the_rules_bw.gif",
+        "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/fuji_bw.gif",
+        "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/fuji.png",
+        "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/mandelbrot.gif",
+        "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/stvincent_bw.gif"
+    ]
+}, {
     "name": "Number Spiral Generator",
     "link": {
         "href": "https://www.github.com/kpberry/spirals",
