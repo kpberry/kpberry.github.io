@@ -1,10 +1,10 @@
 var plaidify = {};
 
-plaidify.loadImageAsURL = function(input, target) {
+plaidify.loadImageAsURL = function (input, target) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
 
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             var uploaded = document.getElementById(target);
             uploaded.setAttribute('src', e.target.result);
 
@@ -16,7 +16,7 @@ plaidify.loadImageAsURL = function(input, target) {
     }
 };
 
-plaidify.plaidify = function(source, plaid) {
+plaidify.plaidify = function (source, plaid) {
     var sourceElement = document.getElementById(source);
     var plaidElement = document.getElementById(plaid);
 
@@ -44,11 +44,11 @@ plaidify.plaidify = function(source, plaid) {
     }
 };
 
-plaidify.lerp = function(a, b, percent) {
+plaidify.lerp = function (a, b, percent) {
     return a + (b - a) * percent;
 };
 
-plaidify._plaidify = function(source, plaid, threshold, plaidIntensity) {
+plaidify._plaidify = function (source, plaid, threshold, plaidIntensity) {
     var sourceData = source.data;
     var plaidData = plaid.data;
 
@@ -92,4 +92,24 @@ plaidify._discrete_convolve_2d = function (data, kernel) {
     }
 
     return result;
+}
+
+
+plaidify._get_horizontal_kernel_2d = function (size) {
+    let half_width = (size - 1) / 2;
+    let kernel = [];
+    for (let i = 0; i < size; i++) {
+        kernel.push(i - half_width);
+    }
+    return [kernel];
+}
+
+
+plaidify._get_vertical_kernel_2d = function (size) {
+    let half_width = (size - 1) / 2;
+    let kernel = [];
+    for (let i = 0; i < size; i++) {
+        kernel.push([i - half_width]);
+    }
+    return kernel;
 }
