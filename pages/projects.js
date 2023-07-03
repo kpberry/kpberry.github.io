@@ -3,7 +3,7 @@ var projects = [{
     "link": {
         "href": "https://github.com/kpberry/image-to-ascii",
         "text": "Github"
-    }, 
+    },
     "info": [
         "Converts images and gifs to ascii art",
         "Capable of converting 120+ images per second on a single thread",
@@ -42,9 +42,9 @@ var projects = [{
 }, {
     "name": "Minimum Vertex Cover Algorithms",
     "link": {
-        "href": "https://github.com/kpberry/minimum-vertex-cover-algorithms", 
+        "href": "https://github.com/kpberry/minimum-vertex-cover-algorithms",
         "text": "Github"
-    }, 
+    },
     "info": [
         "Set of implementations of state of the art minimum vertex cover algorithms",
         "Implements one branch and bound, two local search, and four approximation algorithms",
@@ -64,7 +64,72 @@ var projects = [{
         "Capable of analyzing large corpuses such as Tolstoy's <i>War and Peace</i> in under 10 seconds",
         "Analyzes text by several metrics, including Flesch-Reading ease, the Gunning Fog Index, and others to produce an average text \"grade level\""
     ]
-}, {   
+}, {
+    "name": "Differential Equation Grapher",
+    "link": {
+        "href": "graphing.html",
+        "text": "Web App"
+    },
+    "info": [
+        "Graphs slope and direction fields of arbitrary single differential equations and systems of autonomous differential equations",
+        "Plots approximate solutions to differential equations using Euler's method, Improved Euler's method, or 4th order Runge-Kutta methods",
+        "Graphs component plots for arbitrary differential equations and systems of differential equations"
+    ]
+}, {
+    "name": "Clapchat",
+    "link": {
+        "href": "https://github.com/kpberry/clapchat",
+        "text": "Github"
+    },
+    "info": [
+        "Command line app that takes a picture when the user claps (or snaps)",
+        "Uses a convolution of a Gaussian kernel over the raw audio signal to determine when a clap happens",
+        "Kernel parameters determined through exhaustive grid search over the space of offsets and magnitueds",
+        "Achieves 77% accuracy in clap identification when tested on a hand-made dataset of 350 miscellaneous noises and 350 claps",
+    ]
+}, {
+    "name": "Plaidify",
+    "link": {
+        "href": "plaidify.html",
+        "text": "Web App"
+    },
+    "info": [
+        "Takes a source image and a plaid image and turns the source image plaid",
+        "Uses local pixel gradients to \"wrap\" the plaid around the source image while preserving edges and intensities",
+        "Can be used as a general style transfer from textured style images to content images"
+    ],
+    "images": [
+        "res/plaidify/fuji-plaid.png",
+        "res/plaidify/guitar-plaid.png"
+    ]
+}, {
+    "name": "Boids",
+    "link": {
+        "href": "https://kpberry.github.io/boids.html",
+        "text": "Web App"
+    },
+    "info": [
+        "Implementation of Craig Reynolds's [Boids](http://www.red3d.com/cwr/boids/) (bird-oid objects) flocking algorithm",
+        "Has menu for tuning flock parameters such as cohesion, alignment, separation, velocity, and viewing radius",
+        "Uses an optimized space partitioning algorithm for neighbor detection which allows for flocks with over 10000 individuals",
+        "Includes visualization of boid sight lines"
+    ]
+}, {
+    "name": "Ivan Allen Digital Archive Interface",
+    "link": {
+        "href": "http://allenarchive-dev.iac.gatech.edu/elasticsearch",
+        "text": "Website"
+    },
+    "info": [
+        "<b>NOTE:</b> <i> I worked on this project in 2018 and it has since been passed off to new maintainers. The site has often been broken or unavailable since they have been working on it, so it may not work for you if you try to go there.</i>",
+        "Search interface, graph visualization, and wiki-style transcription editing for the Ivan Allen Digital Archive, a repository of documents from the mayorship of Ivan Allen",
+        "Uses an [elasticsearch](https://www.elastic.co/) database for performing efficient fuzzy searches through document collection",
+        "Graph visualization allows for complex boolean searches and filters to be displayed visually, e.g., \"Find all documents connecting Cecil Alexander and Ivan Allen in 1967\" can be evaluated with 3 filters from dropdown menus",
+        "Used Google's [Tesseract](https://github.com/tesseract-ocr/tesseract) optical character recognition engine to extract text from over 10,000 PDF scans of documents",
+        "Used [spaCy](https://spacy.io/) NLP to generate named entity tags which are used for searching and for connecting nodes in the graph visualization",
+        "Uses a modified version of the [Scripto](https://omeka.org/classic/docs/Plugins/Scripto/) [Omeka](https://omeka.org/) plugin to allow for crowdsourced transcription corrections"
+    ]
+}, {
     "name": "C Utilities",
     "link": {
         "href": "https://github.com/kpberry/c-utils",
@@ -80,7 +145,7 @@ var projects = [{
     "link": {
         "href": "https://github.com/kpberry/LC3",
         "text": "Github"
-    }, 
+    },
     "info": [
         "Fully featured 2-pass assembler, disassembler, and simulator for the [LC3](https://en.wikipedia.org/wiki/LC-3) (Little Computer 3)",
         "Includes implementations of all LC3 trap instructions except PUTSP"
@@ -109,83 +174,4 @@ var projects = [{
         "res/physics/7.png",
         "res/physics/8.png"
     ]
-}, {
-    "name": "Computer Algebra System",
-    "link": {
-        "href": "https://www.github.com/kpberry/cas",
-        "text": "Github"
-    },
-    "info": [
-        "Evaluates symbolic expressions of arbitrary parameter lengths",
-        "Handles operations on Vector, Matrix, and Complex values",
-        "Evaluates convergent summations, standard and hyperbolic trig functions, and derivatives",
-        "Can manipulate algebraic functions and perform term simplification and combination",
-        "Graphs functions, equations, and parametric equations and provides solutions at points",
-        "Dynamic, context sensitive interface written with TKinter"
-    ]
-}, {
-    "name": "Differential Equation Grapher",
-    "link": {
-        "href": "graphing.html",
-        "text": "Web App"
-    },
-    "info": [
-        "Graphs slope and direction fields of arbitrary single differential equations and systems of autonomous differential equations",
-        "Plots approximate solutions to differential equations using Euler's method, Improved Euler's method, or 4th order Runge-Kutta methods",
-        "Graphs component plots for arbitrary differential equations and systems of differential equations"
-    ]
-}, {
-    "name": "Clapchat",
-    "link": {
-        "href": "https://github.com/kpberry/clapchat",
-        "text": "Github"
-    },
-    "info": [
-        "Command line app that takes a picture when the user claps (or snaps)",
-        "Uses a convolution of a Gaussian kernel over the raw audio signal to determine when a clap happens",
-        "Kernel parameters determined through exhaustive grid search over the space of offsets and magnitueds",
-        "Achieves 77% accuracy in clap identification when tested on a hand-made dataset of 350 miscellaneous noises and 350 claps",
-    ]
-}, {
-    "name": "Boids",
-    "link": {
-        "href": "https://kpberry.github.io/boids.html",
-        "text": "Web App"
-    },
-    "info": [
-        "Implementation of Craig Reynolds's [Boids](http://www.red3d.com/cwr/boids/) (bird-oid objects) flocking algorithm",
-        "Has menu for tuning flock parameters such as cohesion, alignment, separation, velocity, and viewing radius",
-        "Uses an optimized space partitioning algorithm for neighbor detection which allows for flocks with over 10000 individuals",
-        "Includes visualization of boid sight lines"
-    ]
-}, {
-    "name": "Plaidify",
-    "link": {
-        "href": "plaidify.html",
-        "text": "Web App"
-    },
-    "info": [
-        "Takes a source image and a plaid image and turns the source image plaid",
-        "Uses local pixel gradients to \"wrap\" the plaid around the source image while preserving edges and intensities",
-        "Can be used as a general style transfer from textured style images to content images"
-    ],
-    "images": [
-        "res/plaidify/fuji-plaid.png",
-        "res/plaidify/guitar-plaid.png"
-    ]
-}, {
-    "name": "Ivan Allen Digital Archive Interface",
-    "link": {
-        "href": "http://allenarchive-dev.iac.gatech.edu/elasticsearch",
-        "text": "Website"
-    },
-    "info": [
-        "<b>NOTE:</b> <i> I worked on this project in 2018 and it has since been passed off to new maintainers. The site has often been broken or unavailable since they have been working on it, so it may not work for you if you try to go there.</i>",
-        "Search interface, graph visualization, and wiki-style transcription editing for the Ivan Allen Digital Archive, a repository of documents from the mayorship of Ivan Allen",
-        "Uses an [elasticsearch](https://www.elastic.co/) database for performing efficient fuzzy searches through document collection",
-        "Graph visualization allows for complex boolean searches and filters to be displayed visually, e.g., \"Find all documents connecting Cecil Alexander and Ivan Allen in 1967\" can be evaluated with 3 filters from dropdown menus",
-        "Used Google's [Tesseract](https://github.com/tesseract-ocr/tesseract) optical character recognition engine to extract text from over 10,000 PDF scans of documents",
-        "Used [spaCy](https://spacy.io/) NLP to generate named entity tags which are used for searching and for connecting nodes in the graph visualization",
-        "Uses a modified version of the [Scripto](https://omeka.org/classic/docs/Plugins/Scripto/) [Omeka](https://omeka.org/) plugin to allow for crowdsourced transcription corrections"
-    ]
-}];
+},];
