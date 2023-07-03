@@ -269,3 +269,21 @@ plaidify._shift_pixels = function (image, plaid, scale, kernel_size, blur) {
 
     return shifted;
 }
+
+
+plaidify._tests = function() {
+    let data = [
+        [1, 2, 3, 4, 5, 6, 7],
+        [2, 3, 4, 5, 6, 7, 8],
+        [3, 4, 5, 6, 7, 8, 9],
+        [4, 5, 6, 7, 8, 9, 10]
+    ];
+    let kernel = [[0, 1, 0], [1, 0, 1], [0, 1, 0]];
+    console.log(plaidify._discrete_convolve_2d(data, kernel));
+    console.log(plaidify._get_horizontal_kernel_2d(3));
+    console.log(plaidify._get_vertical_kernel_2d(3));
+    console.log(plaidify._blerp(10, 30, 20, 90, 0.2, 0.3));
+    console.log(plaidify._resize_2d(data, 7, 4));
+    console.log(plaidify._resize_2d(data, 14, 8));
+    console.log(plaidify._resize_2d(data, 15, 9));
+}
