@@ -26,23 +26,65 @@ plaidify.plaidify = function (source, plaid) {
     if (plaidElement.complete && sourceElement.complete
         && plaidElement.naturalWidth !== 0 && sourceElement.naturalWidth !== 0) {
 
+        // get plaid image data
+        canv.setAttribute('width', plaidElement.width);
+        canv.setAttribute('height', plaidElement.height);
+        ctx.drawImage(plaidElement, 0, 0);
+        let plaidImage = ctx.getImageData(0, 0, canv.width, canv.height);
+
+        // get source image data
         canv.setAttribute('width', sourceElement.width);
         canv.setAttribute('height', sourceElement.height);
-
         ctx.drawImage(sourceElement, 0, 0);
-        var sourceImage = ctx.getImageData(0, 0, canv.width, canv.height);
+        let sourceImage = ctx.getImageData(0, 0, canv.width, canv.height);
 
-        //automatically crops the plaid to be the same size as the source image
-        ctx.drawImage(plaidElement, 0, 0);
-        var plaidImage = ctx.getImageData(0, 0, canv.width, canv.height);
+        let plaidIntensity = document.getElementById('intensity').value || 0.5;
+        let plaidThreshold = document.getElementById('threshold').value || 127;
 
-        var plaidIntensity = document.getElementById('intensity').value || 0.5;
-        var plaidThreshold = document.getElementById('threshold').value || 127;
+        let source_rgb = plaidify._image_to_rgb_channels(sourceImage, sourceElement.width, sourceElement.height);
+        let plaid_rgb = plaidify._image_to_rgb_channels(plaidImage, plaidElement.width, plaidElement.height);
 
-        sourceImage.data = plaidify._plaidify(sourceImage, plaidImage, plaidThreshold, plaidIntensity);
-        ctx.putImageData(sourceImage, 0, 0);
+        let shifted_rgb = plaidify._shift_pixels(source_rgb, plaid_rgb, 50, 3);
+        let shifted_image = plaidify._image_from_rgb_channels(shifted_rgb);
+
+        ctx.putImageData(shifted_image, 0, 0);
     }
 };
+
+plaidify._image_to_rgb_channels = function (image) {
+    let result = [];
+    for (let channel_offset = 0; channel_offset < 3; channel_offset++) {
+        let channel = [];
+        for (let r = 0; r < image.height; r++) {
+            let row = [];
+            for (let c = 0; c < image.width; c++) {
+                row.push(image.data[4 * (r * image.width + c) + channel_offset]);
+            }
+            channel.push(row);
+        }
+        result.push(channel);
+    }
+
+    return result;
+}
+
+plaidify._image_from_rgb_channels = function (rgb_channels) {
+    let [width, height, channels] = [rgb_channels[0][0].length, rgb_channels[0].length, rgb_channels.length];
+    let result = [];
+    for (let r = 0; r < height; r++) {
+        for (let c = 0; c < width; c++) {
+            for (let channel_offset = 0; channel_offset < channels; channel_offset++) {
+                result.push(rgb_channels[channel_offset][r][c]);
+            }
+            result.push(255);
+        }
+    }
+    return new ImageData(
+        new Uint8ClampedArray(result),
+        width,
+        height
+    );
+}
 
 plaidify.lerp = function (a, b, t) {
     return a + (b - a) * t;
@@ -162,10 +204,10 @@ plaidify._grayscale = function (image) {
     for (let r = 0; r < image_height; r++) {
         let row = [];
         for (let c = 0; c < image_width; c++) {
-            let r = image[0][r][c];
-            let g = image[1][r][c];
-            let b = image[2][r][c];
-            row.push((r + g + b) / 3);
+            let red = image[0][r][c];
+            let green = image[1][r][c];
+            let blue = image[2][r][c];
+            row.push((red + green + blue) / 3);
         }
         result.push(row);
     }
@@ -180,7 +222,7 @@ plaidify._shift_pixels = function (image, plaid, scale, kernel_size, blur) {
     image = plaidify._grayscale(image);
     let [image_width, image_height] = [image[0].length, image.length];
 
-    plaid = plaidify.map(channel => plaidify._resize_2d(channel, image_width, image_height));
+    plaid = plaid.map(channel => plaidify._resize_2d(channel, image_width, image_height));
 
     let blurred = image; // TODO add gaussian blur
     let horizontal_kernel = plaidify._get_horizontal_kernel_2d(kernel_size);
@@ -190,14 +232,18 @@ plaidify._shift_pixels = function (image, plaid, scale, kernel_size, blur) {
     let dr = plaidify._discrete_convolve_2d(blurred, vertical_kernel).map(row => row.map(col => col * scale));
 
     let shifted = [];
-    for (let r = 0; r < image_height; r++) {
-        let row = [];
-        for (let c = 0; c < image_width; c++) {
-            let shifted_r = plaidify._clip(r + dr[r][c], 0, image_height);
-            let shifted_c = plaidify._clip(c + dc[r][c], 0, image_width);
-            row.push(plaid[shifted_r][shifted_c]);
+    for (let channel_offset = 0; channel_offset < 3; channel_offset++) {
+        let channel = [];
+        for (let r = 0; r < image_height; r++) {
+            let row = [];
+            for (let c = 0; c < image_width; c++) {
+                let shifted_r = plaidify._clip(r + dr[r][c], 0, image_height - 1);
+                let shifted_c = plaidify._clip(c + dc[r][c], 0, image_width - 1);
+                row.push(plaid[channel_offset][Math.floor(shifted_r)][Math.floor(shifted_c)]);
+            }
+            channel.push(row);
         }
-        shifted.push(row);
+        shifted.push(channel);
     }
 
     return shifted;
