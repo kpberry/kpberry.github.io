@@ -44,8 +44,8 @@ plaidify.plaidify = function (source, plaid) {
     }
 };
 
-plaidify.lerp = function (a, b, percent) {
-    return a + (b - a) * percent;
+plaidify.lerp = function (a, b, t) {
+    return a + (b - a) * t;
 };
 
 plaidify._plaidify = function (source, plaid, threshold, plaidIntensity) {
@@ -113,3 +113,44 @@ plaidify._get_vertical_kernel_2d = function (size) {
     }
     return kernel;
 }
+
+
+plaidify._blerp = function (top_left, top_right, bottom_left, bottom_right, tx, ty) {
+    return plaidify.lerp(
+        plaidify.lerp(top_left, top_right, tx),
+        plaidify.lerp(bottom_left, bottom_right, tx),
+        ty
+    )
+}
+
+
+plaidify._resize_2d = function (data, width, height) {
+    let [data_width, data_height] = [data[0].length, data.length];
+    let c_step = (data_width - 1) / (width - 1);  // don't interpolate the last column
+    let r_step = (data_height - 1) / (height - 1);  // don't interpolate the last row
+
+    let result = [];
+    for (let r = 0; r < height - 1; r++) {
+        let row = [];
+        let source_r = r * r_step;
+        for (let c = 0; c < width - 1; c++) {
+            let source_c = c * c_step;
+            let source_r_top = Math.floor(source_r);
+            let source_c_top = Math.floor(source_c);
+            let value = plaidify._blerp(
+                data[source_r_top][source_c_top],
+                data[source_r_top][source_c_top + 1],
+                data[source_r_top + 1][source_c_top],
+                data[source_r_top + 1][source_c_top + 1],
+                source_c - source_c_top,
+                source_r - source_r_top
+            );
+            row.push(value);
+        }
+        row.push(data[Math.floor(source_r)][data_width - 1]);  // preserve last column exactly
+        result.push(row);
+    }
+    result.push(data[data_height - 1]);  // preserve last row exactly
+
+    return result;
+};
