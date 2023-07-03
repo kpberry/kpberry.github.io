@@ -40,12 +40,13 @@ plaidify.plaidify = function (source, plaid) {
 
         let kernelSize = document.getElementById('kernel-size').value;
         let plaidScale = document.getElementById('distortion').value;
+        let blur = document.getElementById('smoothing').value;
         let colored = document.getElementById('colored').checked;
 
         let source_rgb = plaidify._image_to_rgb_channels(sourceImage, sourceElement.width, sourceElement.height);
         let plaid_rgb = plaidify._image_to_rgb_channels(plaidImage, plaidElement.width, plaidElement.height);
 
-        let shifted_rgb = plaidify._shift_pixels(source_rgb, plaid_rgb, plaidScale, kernelSize, 2, colored);
+        let shifted_rgb = plaidify._shift_pixels(source_rgb, plaid_rgb, plaidScale, kernelSize, blur, colored);
         let shifted_image = plaidify._image_from_rgb_channels(shifted_rgb);
 
         ctx.putImageData(shifted_image, 0, 0);

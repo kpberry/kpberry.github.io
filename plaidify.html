@@ -51,6 +51,10 @@
                         <input id="distortion" type="range" class="w3-bar-item w3-input" step="25" min="0" max="250"
                             value="50" oninput="plaidify.plaidify('source', 'plaid')"
                             onchange="plaidify.plaidify('source', 'plaid')" />
+                        <label for="smoothing" class="w3-bar-item">Smoothing</label>
+                        <input id="smoothing" type="range" class="w3-bar-item w3-input" step="1" min="1" max="10"
+                            value="2" oninput="plaidify.plaidify('source', 'plaid')"
+                            onchange="plaidify.plaidify('source', 'plaid')" />
                         <label for="colored" class="w3-bar-item">Keep non-plaid colors</label>
                         <input id="colored" type="checkbox" class="w3-bar-item w3-input w3-check" checked
                             oninput="plaidify.plaidify('source', 'plaid')"
