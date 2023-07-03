@@ -38,13 +38,13 @@ plaidify.plaidify = function (source, plaid) {
         ctx.drawImage(sourceElement, 0, 0);
         let sourceImage = ctx.getImageData(0, 0, canv.width, canv.height);
 
-        let plaidIntensity = document.getElementById('intensity').value || 0.5;
-        let plaidThreshold = document.getElementById('threshold').value || 127;
+        let kernelSize = document.getElementById('intensity').value || 7;
+        let plaidScale = document.getElementById('threshold').value || 127;
 
         let source_rgb = plaidify._image_to_rgb_channels(sourceImage, sourceElement.width, sourceElement.height);
         let plaid_rgb = plaidify._image_to_rgb_channels(plaidImage, plaidElement.width, plaidElement.height);
 
-        let shifted_rgb = plaidify._shift_pixels(source_rgb, plaid_rgb, 50, 3);
+        let shifted_rgb = plaidify._shift_pixels(source_rgb, plaid_rgb, plaidScale, kernelSize);
         let shifted_image = plaidify._image_from_rgb_channels(shifted_rgb);
 
         ctx.putImageData(shifted_image, 0, 0);
@@ -219,12 +219,17 @@ plaidify._clip = function (value, min, max) {
 }
 
 plaidify._shift_pixels = function (image, plaid, scale, kernel_size, blur) {
-    image = plaidify._grayscale(image);
-    let [image_width, image_height] = [image[0].length, image.length];
+    let [image_width, image_height] = [image[0][0].length, image[0].length];
 
+    let grayscale = plaidify._grayscale(image);
     plaid = plaid.map(channel => plaidify._resize_2d(channel, image_width, image_height));
 
-    let blurred = image; // TODO add gaussian blur
+    // convert images to float to make math easier
+    grayscale = grayscale.map(row => row.map(col => col / 255.0));
+    image = image.map(channel => channel.map(row => row.map(col => col / 255.0)));
+    plaid = plaid.map(channel => channel.map(row => row.map(col => col / 255.0)));
+
+    let blurred = grayscale; // TODO add gaussian blur
     let horizontal_kernel = plaidify._get_horizontal_kernel_2d(kernel_size);
     let vertical_kernel = plaidify._get_vertical_kernel_2d(kernel_size);
 
@@ -237,9 +242,9 @@ plaidify._shift_pixels = function (image, plaid, scale, kernel_size, blur) {
         for (let r = 0; r < image_height; r++) {
             let row = [];
             for (let c = 0; c < image_width; c++) {
-                let shifted_r = plaidify._clip(r + dr[r][c], 0, image_height - 1);
-                let shifted_c = plaidify._clip(c + dc[r][c], 0, image_width - 1);
-                row.push(plaid[channel_offset][Math.floor(shifted_r)][Math.floor(shifted_c)]);
+                let shifted_r = Math.round(plaidify._clip(r + dr[r][c], 0, image_height - 1));
+                let shifted_c = Math.round(plaidify._clip(c + dc[r][c], 0, image_width - 1));
+                row.push(plaid[channel_offset][shifted_r][shifted_c] * image[channel_offset][shifted_r][shifted_c] * 255.0);
             }
             channel.push(row);
         }
