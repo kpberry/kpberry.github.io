@@ -154,3 +154,24 @@ plaidify._resize_2d = function (data, width, height) {
 
     return result;
 };
+
+
+
+
+plaidify._grayscale = function (image) {
+    let [image_width, image_height] = [image[0][0].length, image[0].length];
+
+    let result = [];
+    for (let r = 0; r < image_height; r++) {
+        let row = [];
+        for (let c = 0; c < image_width; c++) {
+            let r = image[0][r][c];
+            let g = image[1][r][c];
+            let b = image[2][r][c];
+            row.push((r + g + b) / 3);
+        }
+        result.push(row);
+    }
+    return result;
+}
+
