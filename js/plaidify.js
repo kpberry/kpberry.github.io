@@ -155,9 +155,6 @@ plaidify._resize_2d = function (data, width, height) {
     return result;
 };
 
-
-
-
 plaidify._grayscale = function (image) {
     let [image_width, image_height] = [image[0][0].length, image[0].length];
 
@@ -175,3 +172,33 @@ plaidify._grayscale = function (image) {
     return result;
 }
 
+plaidify._clip = function (value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
+
+plaidify._shift_pixels = function (image, plaid, scale, kernel_size, blur) {
+    image = plaidify._grayscale(image);
+    let [image_width, image_height] = [image[0].length, image.length];
+
+    plaid = plaidify.map(channel => plaidify._resize_2d(channel, image_width, image_height));
+
+    let blurred = image; // TODO add gaussian blur
+    let horizontal_kernel = plaidify._get_horizontal_kernel_2d(kernel_size);
+    let vertical_kernel = plaidify._get_vertical_kernel_2d(kernel_size);
+
+    let dc = plaidify._discrete_convolve_2d(blurred, horizontal_kernel).map(row => row.map(col => col * scale));
+    let dr = plaidify._discrete_convolve_2d(blurred, vertical_kernel).map(row => row.map(col => col * scale));
+
+    let shifted = [];
+    for (let r = 0; r < image_height; r++) {
+        let row = [];
+        for (let c = 0; c < image_width; c++) {
+            let shifted_r = plaidify._clip(r + dr[r][c], 0, image_height);
+            let shifted_c = plaidify._clip(c + dc[r][c], 0, image_width);
+            row.push(plaid[shifted_r][shifted_c]);
+        }
+        shifted.push(row);
+    }
+
+    return shifted;
+}
