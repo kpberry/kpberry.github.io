@@ -270,6 +270,28 @@ plaidify._shift_pixels = function (image, plaid, scale, kernel_size, blur) {
     return shifted;
 }
 
+plaidify._plaidify1 = function (image, plaid) {
+    let [image_width, image_height] = [image[0][0].length, image[0].length];
+
+    let grayscale = plaidify._grayscale(image);
+    plaid = plaid.map(channel => plaidify._resize_2d(channel, image_width, image_height));
+
+    let plaided = [];
+    for (let channel_offset = 0; channel_offset < 3; channel_offset++) {
+        let channel = [];
+        for (let r = 0; r < image_height; r++) {
+            let row = [];
+            for (let c = 0; c < image_width; c++) {
+                row.push(grayscale[r][c] / 255.0 * plaid[channel_offset][r][c]);
+            }
+            channel.push(row);
+        }
+        plaided.push(channel);
+    }
+
+    return plaided;
+}
+
 
 plaidify._tests = function() {
     let data = [
