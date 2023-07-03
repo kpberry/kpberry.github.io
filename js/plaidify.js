@@ -38,13 +38,14 @@ plaidify.plaidify = function (source, plaid) {
         ctx.drawImage(sourceElement, 0, 0);
         let sourceImage = ctx.getImageData(0, 0, canv.width, canv.height);
 
-        let kernelSize = document.getElementById('intensity').value || 7;
-        let plaidScale = document.getElementById('threshold').value || 127;
+        let kernelSize = document.getElementById('kernel-size').value;
+        let plaidScale = document.getElementById('distortion').value;
+        let colored = document.getElementById('colored').checked;
 
         let source_rgb = plaidify._image_to_rgb_channels(sourceImage, sourceElement.width, sourceElement.height);
         let plaid_rgb = plaidify._image_to_rgb_channels(plaidImage, plaidElement.width, plaidElement.height);
 
-        let shifted_rgb = plaidify._shift_pixels(source_rgb, plaid_rgb, plaidScale, kernelSize, 2);
+        let shifted_rgb = plaidify._shift_pixels(source_rgb, plaid_rgb, plaidScale, kernelSize, 2, colored);
         let shifted_image = plaidify._image_from_rgb_channels(shifted_rgb);
 
         ctx.putImageData(shifted_image, 0, 0);
@@ -233,7 +234,7 @@ plaidify._clip = function (value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
 
-plaidify._shift_pixels = function (image, plaid, scale, kernel_size, blur) {
+plaidify._shift_pixels = function (image, plaid, scale, kernel_size, blur, colored) {
     let [image_width, image_height] = [image[0][0].length, image[0].length];
 
     let grayscale = plaidify._grayscale(image);
@@ -260,7 +261,8 @@ plaidify._shift_pixels = function (image, plaid, scale, kernel_size, blur) {
             for (let c = 0; c < image_width; c++) {
                 let shifted_r = Math.round(plaidify._clip(r + dr[r][c] * scale, 0, image_height - 1));
                 let shifted_c = Math.round(plaidify._clip(c + dc[r][c] * scale, 0, image_width - 1));
-                row.push(plaid[channel_offset][shifted_r][shifted_c] * image[channel_offset][shifted_r][shifted_c] * 255.0);
+                let intensity = colored ? image[channel_offset][shifted_r][shifted_c] : grayscale[shifted_r][shifted_c]
+                row.push(plaid[channel_offset][shifted_r][shifted_c] * intensity * 255.0);
             }
             channel.push(row);
         }

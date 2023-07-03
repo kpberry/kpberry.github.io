@@ -42,14 +42,18 @@
                 <div class="w3-container w3-rest">
                     <h5 class="w3-text w3-text-dark-gray w3-center" id="temp_2">Results will be displayed here</h5>
 
-                    <div class="w3-panel  w3-bar w3-dark-gray">
-                        <label for="intensity" class="w3-left w3-bar-item">Kernel Size</label>
-                        <input id="intensity" type="range" class="w3-left w3-bar-item w3-input" step="2" min="1"
-                            max="7" value="3" oninput="plaidify.plaidify('source', 'plaid')"
+                    <div class="w3-panel w3-bar w3-dark-gray">
+                        <label for="kernel-size" class="w3-left w3-bar-item">Edginess</label>
+                        <input id="kernel-size" type="range" class="w3-left w3-bar-item w3-input" step="2" min="1"
+                            max="7" value="5" oninput="plaidify.plaidify('source', 'plaid')"
                             onchange="plaidify.plaidify('source', 'plaid')" />
-                        <label for="threshold" class="w3-right w3-bar-item">Plaid Scale</label>
-                        <input id="threshold" type="range" class="w3-right w3-bar-item w3-input" step="1" min="0"
-                            max="255" value="50" oninput="plaidify.plaidify('source', 'plaid')"
+                        <label for="distortion" class="w3-bar-item">Distortion</label>
+                        <input id="distortion" type="range" class="w3-bar-item w3-input" step="25" min="0" max="250"
+                            value="50" oninput="plaidify.plaidify('source', 'plaid')"
+                            onchange="plaidify.plaidify('source', 'plaid')" />
+                        <label for="colored" class="w3-bar-item">Keep non-plaid colors</label>
+                        <input id="colored" type="checkbox" class="w3-bar-item w3-input w3-check" checked
+                            oninput="plaidify.plaidify('source', 'plaid')"
                             onchange="plaidify.plaidify('source', 'plaid')" />
                     </div>
 
