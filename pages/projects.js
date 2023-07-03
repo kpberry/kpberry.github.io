@@ -165,8 +165,13 @@ var projects = [{
         "text": "Web App"
     },
     "info": [
-        "Takes a foreground image and a cropped background plaid and produces a plaid interpolation of the two",
-        "Uses the grayscale of the original image and a threshold intensity to determine the \"plaidness\" of a pixel in the final image to ensure the maintenance of edges and clearly defined shapes"
+        "Takes a source image and a plaid image and turns the source image plaid",
+        "Uses local pixel gradients to \"wrap\" the plaid around the source image while preserving edges and intensities",
+        "Can be used as a general style transfer from textured style images to content images"
+    ],
+    "images": [
+        "res/plaidify/fuji-plaid.png",
+        "res/plaidify/guitar-plaid.png"
     ]
 }, {
     "name": "Ivan Allen Digital Archive Interface",
