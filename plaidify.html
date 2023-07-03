@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -24,15 +25,17 @@
                     <h5 class="w3-text w3-text-dark-gray w3-center" id="temp_1">Upload your source images here</h5>
 
                     <div class="w3-panel  w3-bar w3-dark-gray">
-                        <input type="file" class="w3-left w3-bar-item" onchange="plaidify.loadImageAsURL(this, 'source');" />
-                        <img id="source" src="#" class="w3-bar-item w3-right" alt="Your non-plaid image" onload="plaidify.plaidify('source', 'plaid')"
-                        />
+                        <input type="file" class="w3-left w3-bar-item"
+                            onchange="plaidify.loadImageAsURL(this, 'source');" />
+                        <img id="source" src="#" class="w3-bar-item w3-right" alt="Your non-plaid image"
+                            onload="plaidify.plaidify('source', 'plaid')" />
                     </div>
 
                     <div class="w3-panel  w3-bar w3-dark-gray">
-                        <input type="file" class="w3-left w3-bar-item" onchange="plaidify.loadImageAsURL(this, 'plaid');" />
-                        <img id="plaid" src="#" class="w3-bar-item w3-right" alt="Your plaid image" onload="plaidify.plaidify('source', 'plaid')"
-                        />
+                        <input type="file" class="w3-left w3-bar-item"
+                            onchange="plaidify.loadImageAsURL(this, 'plaid');" />
+                        <img id="plaid" src="#" class="w3-bar-item w3-right" alt="Your plaid image"
+                            onload="plaidify.plaidify('source', 'plaid')" />
                     </div>
 
                 </div>
@@ -40,11 +43,13 @@
                     <h5 class="w3-text w3-text-dark-gray w3-center" id="temp_2">Results will be displayed here</h5>
 
                     <div class="w3-panel  w3-bar w3-dark-gray">
-                        <label for="intensity" class="w3-left w3-bar-item">Plaid Intensity</label>
-                        <input id="intensity" type="range" class="w3-left w3-bar-item w3-input" step="0.01" min="0" max="1" value="0.5" oninput="plaidify.plaidify('source', 'plaid')"
+                        <label for="intensity" class="w3-left w3-bar-item">Kernel Size</label>
+                        <input id="intensity" type="range" class="w3-left w3-bar-item w3-input" step="2" min="1"
+                            max="7" value="3" oninput="plaidify.plaidify('source', 'plaid')"
                             onchange="plaidify.plaidify('source', 'plaid')" />
-                        <label for="threshold" class="w3-right w3-bar-item">Plaid Threshold</label>
-                        <input id="threshold" type="range" class="w3-right w3-bar-item w3-input" step="1" min="0" max="255" value="127" oninput="plaidify.plaidify('source', 'plaid')"
+                        <label for="threshold" class="w3-right w3-bar-item">Plaid Scale</label>
+                        <input id="threshold" type="range" class="w3-right w3-bar-item w3-input" step="1" min="0"
+                            max="255" value="50" oninput="plaidify.plaidify('source', 'plaid')"
                             onchange="plaidify.plaidify('source', 'plaid')" />
                     </div>
 
