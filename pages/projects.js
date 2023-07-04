@@ -34,9 +34,9 @@ var projects = [{
         "res/pinpointer/province_tree_10.png"
     ]
 }, {
-    "name": "duplicate-detector",
+    "name": "detect-duplicates",
     "link": {
-        "href": "https://github.com/kpberry/duplicate-detector",
+        "href": "https://github.com/kpberry/detect-duplicates",
         "text": "Github"
     },
     "info": [
