@@ -7,37 +7,33 @@ accordion.toggle_card = function (outer, inner) {
 };
 
 accordion.add_slideshow_to_card_info = function (card_data, info, color) {
-    var cur_image = 0;
-    var left_button = document.createElement('button');
-    left_button.onclick = function () {
-        images.children[cur_image].style.display = "none";
-        cur_image = cur_image > 0 ? cur_image - 1 : images.children.length - 1;
-        images.children[cur_image].style.display = "block";
+    let cur_image = 0;
+    let images = card_data['images'];
+
+    let image = document.createElement('img');
+
+    let cycle_images = function (direction) {
+        cur_image = (cur_image + direction + images.length) % images.length;
+        image.src = images[cur_image];
+        image.style.width = "100%";
+        image.style.display = "block";
     }
+
+    let left_button = document.createElement('button');
+    left_button.onclick = () => cycle_images(-1);
     left_button.classList.add("w3-button", "w3-" + color, "w3-half");
     left_button.innerHTML = "&#10094;";
 
     var right_button = document.createElement('button');
-    right_button.onclick = function () {
-        images.children[cur_image].style.display = "none";
-        cur_image = cur_image < images.children.length - 1 ? cur_image + 1 : 0;
-        images.children[cur_image].style.display = "block";
-    }
+    right_button.onclick = () => cycle_images(1);
     right_button.classList.add("w3-button", "w3-" + color, "w3-half");
     right_button.innerHTML = "&#10095;";
 
     info.appendChild(left_button);
     info.appendChild(right_button);
+    info.appendChild(image);
 
-    var images = document.createElement("li");
-    for (var i = 0; i < card_data["images"].length; i++) {
-        var image = document.createElement("img");
-        image.src = card_data["images"][i];
-        image.style.width = "100%";
-        image.style.display = i === 0 ? "block" : "none";
-        images.appendChild(image);
-    }
-    info.appendChild(images);
+    cycle_images(0); // load the first image
 };
 
 accordion.add_card = function (card_data, accordion_element, color) {
