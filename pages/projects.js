@@ -11,11 +11,11 @@ var projects = [{
         "Uses hand-coded SIMD instructions for improved performance"
     ],
     "images": [
-        "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/you_know_the_rules_bw.gif",
-        "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/fuji_bw.gif",
-        "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/fuji.png",
-        "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/mandelbrot.gif",
-        "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/stvincent_bw.gif"
+        "res/image-to-ascii/you_know_the_rules_bw.gif",
+        "res/image-to-ascii/fuji_bw.gif",
+        "res/image-to-ascii/fuji.png",
+        "res/image-to-ascii/mandelbrot_small.gif",
+        "res/image-to-ascii/stvincent_bw.gif"
     ]
 }, {
     "name": "pinpointer",
