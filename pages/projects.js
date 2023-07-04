@@ -31,7 +31,7 @@ var projects = [{
     ],
     "images": [
         "res/pinpointer/country_tree_10.png",
-        "res/pinpointer/province_tree_8.png"
+        "res/pinpointer/province_tree_10.png"
     ]
 }, {
     "name": "Number Spiral Generator",
