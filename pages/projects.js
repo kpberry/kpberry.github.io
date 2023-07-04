@@ -34,6 +34,17 @@ var projects = [{
         "res/pinpointer/province_tree_10.png"
     ]
 }, {
+    "name": "duplicate-detector",
+    "link": {
+        "href": "https://github.com/kpberry/duplicate-detector",
+        "text": "Github"
+    },
+    "info": [
+        "Recursively finds all of the files in a directory",
+        "Runs in O(number of files) time while only using O(largest file in directory) memory",
+        "Can check the entire linux kernel repository (roughly 5GB, over 70,000 files) in about 5 seconds"
+    ]
+}, {
     "name": "Number Spiral Generator",
     "link": {
         "href": "https://www.github.com/kpberry/spirals",
