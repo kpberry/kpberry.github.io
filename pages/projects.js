@@ -18,6 +18,22 @@ var projects = [{
         "https://raw.githubusercontent.com/kpberry/image-to-ascii/main/gallery/stvincent_bw.gif"
     ]
 }, {
+    "name": "pinpointer",
+    "link": {
+        "href": "https://github.com/kpberry/pinpointer",
+        "text": "Github"
+    },
+    "info": [
+        "Performs fast point-in-province and point-in-country queries",
+        "Uses a space partitioning tree to achieve millions of point-in-region queries per second",
+        "Has helper functions for loading country and province data and using them to construct partition trees",
+        "Has an api server for making queries via http"
+    ],
+    "images": [
+        "res/pinpointer/country_tree_10.png",
+        "res/pinpointer/province_tree_8.png"
+    ]
+}, {
     "name": "Number Spiral Generator",
     "link": {
         "href": "https://www.github.com/kpberry/spirals",
