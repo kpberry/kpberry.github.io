@@ -40,7 +40,7 @@ var projects = [{
         "text": "Github"
     },
     "info": [
-        "Recursively finds all of the files in a directory",
+        "Recursively finds all of the duplicated files in a directory",
         "Runs in O(number of files) time while only using O(largest file in directory) memory",
         "Can check the entire linux kernel repository (roughly 5GB, over 70,000 files) in about 5 seconds"
     ]
