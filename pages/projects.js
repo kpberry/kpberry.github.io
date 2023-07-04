@@ -45,6 +45,20 @@ var projects = [{
         "Can check the entire linux kernel repository (roughly 5GB, over 70,000 files) in about 5 seconds"
     ]
 }, {
+    "name": "Rolling a d7 in Finite(ish) Time",
+    "link": {
+        "href": "https://raw.githubusercontent.com/kpberry/dice/main/dice.pdf",
+        "text": "Paper"
+    },
+    "info": [
+        "Paper analyzing the problem of simulating dice with any number of faces given only a standard die set",
+        "Presents expected finite-time algorithm for rolling dice with any number of faces",
+        "Analyzes expected number of total throws and total dice rolled for any die set and target dice",
+        "Proves that number of expected throws can be arbitrarily low if the number of dice is not limited",
+        "Proves that increasing the number of dice never increases the number of expected throws",
+        "Finds an interesting case where the number of dice ever rolled can be efficiently minimized"
+    ]
+}, {
     "name": "Number Spiral Generator",
     "link": {
         "href": "https://www.github.com/kpberry/spirals",
