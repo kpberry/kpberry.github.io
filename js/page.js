@@ -10,11 +10,11 @@ page.nav_links = [{
     "href": "talks.html",
     "text": "Talks"
 }, {
-    "href": "res/kevin_berry_resume.pdf",
-    "text": "Resume"
-}, {
     "href": "contact.html",
     "text": "Contact"
+}, {
+    "href": "res/kevin_berry_resume.pdf",
+    "text": "Resume"
 }];
 
 page.prepend_navigation = function (parent, color = "indigo") {
