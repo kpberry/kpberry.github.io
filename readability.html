@@ -8,9 +8,6 @@
     <script src="js/page.js"></script>
     <script>
         window.onload = function () {
-            var main = document.getElementById("main");
-            page.append_footer(main, "indigo");
-
             var text = document.getElementById('text');
             text.oninput = text.onpropertychange = function () {
                 readability.analyze(text.value);
@@ -31,7 +28,7 @@
             <div class="w3-white w3-panel">
                 <div class="w3-container w3-half">
                     <h5 class="w3-text w3-text-indigo w3-center" id="temp_1">Text to Analyze</h5>
-                    <textarea style="height: 75%; width: 100%; resize:none;" id="text" class=" w3-input"></textarea>
+                    <textarea style="height: 75%; width: 100%; resize:none; border: 1px solid black;" id="text" class=" w3-input"></textarea>
                 </div>
                 <div class="w3-container w3-rest">
                     <h5 class="w3-text w3-text-indigo w3-center" id="temp_2">Results</h5>
