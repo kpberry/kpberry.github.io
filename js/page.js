@@ -14,9 +14,9 @@ page.nav_links = [{
     "text": "Contact"
 }];
 
-page.prepend_navigation = function (parent, color) {
+page.prepend_navigation = function (parent, color = "indigo") {
     var nav = document.createElement("nav");
-    nav.classList.add("w3-bar", "w3-" + color);
+    nav.classList.add("w3-bar", `w3-${color}`);
 
     for (var i = 0; i < page.nav_links.length; i++) {
         var link = document.createElement("a");
@@ -29,21 +29,21 @@ page.prepend_navigation = function (parent, color) {
     parent.insertBefore(nav, parent.children[0]);
 }
 
-page.make_list_elements = function (items) {
+page.make_list_elements = function (items, color = "indigo") {
     return items.map(({ name, info, link }) => {
         let item_element = document.createElement("div");
         item_element.classList.add("w3-panel");
 
         let item_list_element = document.createElement("ul");
         item_list_element.classList.add("w3-ul");
-        
+
         let name_element;
         if (link === undefined) {
             name_element = document.createElement("div");
-            name_element.classList.add("w3-text-indigo");
+            name_element.classList.add(`w3-text-${color}`);
         } else {
             name_element = document.createElement("a");
-            name_element.classList.add("w3-text-indigo", "w3-hover-text-black");
+            name_element.classList.add(`w3-text-${color}`, "w3-hover-text-black");
             name_element.href = link;
         }
         name_element.innerHTML = name;
@@ -53,9 +53,9 @@ page.make_list_elements = function (items) {
         item_element.appendChild(header);
 
         let info_elements = info.map(line => {
-            line = line.replace(
+            line = line.replace( // replace link markup [text](url) with actual links
                 /\[(.*?)\]\((.*?)\)/g,
-                '<a href="$2" target="_blank" class="w3-hover-text-indigo">$1</a>'
+                `<a href="$2" target="_blank" class="w3-hover-text-${color}">$1</a>`
             );
 
             let li = document.createElement("li");
