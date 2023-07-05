@@ -5,25 +5,29 @@
     <link rel="stylesheet" type="text/css" href="styles/w3.css" />
     <script src="js/page.js" type="text/javascript"></script>
     <script>
+        const links = [{
+            "name": "Contact me via",
+            "info": [
+                "[email](mailto:kpberry11@gmail.com)",
+                "[linkedin](https://www.LinkedIn.com/in/kevin-berry-820223141)",
+                "[github](https://www.github.com/kpberry)",
+                "[bandcamp](https://kevinberry.bandcamp.com)",
+                "[facebook](https://www.facebook.com/kevin.berry.142240)"
+            ]
+        }];
+
         window.onload = function () {
             var main = document.getElementById("main");
             page.prepend_navigation(main, "indigo");
+
+            let link_elements = page.make_list_elements(links);
+            link_elements.forEach(element => main.appendChild(element));
         };
     </script>
 </head>
 
 <body>
     <div class="w3-display-top w3-mobile" id="main">
-        <div class="w3-panel">
-            <h5 class="w3-text-indigo">Contact me via</h5>
-            <ul class="w3-ul">
-                <li><a href="mailto:kpberry11@gmail.com" class="w3-hover-text-indigo">email</a></li>
-                <li><a href="https://www.LinkedIn.com/in/kevin-berry-820223141/" class="w3-hover-text-indigo">linkedin</a></li>
-                <li><a href="https://www.github.com/kpberry" class="w3-hover-text-indigo">github</a></li>
-                <li><a href="https://kevinberry.bandcamp.com" class="w3-hover-text-indigo">bandcamp</a></li>
-                <li><a href="https://www.facebook.com/kevin.berry.142240" class="w3-hover-text-indigo">facebook</a></li>
-            </ul>
-        </div>
     </div>
 </body>
 

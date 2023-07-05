@@ -28,6 +28,7 @@
         window.onload = function () {
             var main = document.getElementById("main");
             page.prepend_navigation(main, "indigo");
+
             let section_elements = page.make_list_elements(sections);
             section_elements.forEach(element => main.appendChild(element));
         };
