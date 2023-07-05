@@ -1,28 +1,52 @@
+<!DOCTYPE html>
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="styles/w3.css" />
     <script src="js/accordion.js" type="text/javascript"></script>
     <script src="js/page.js" type="text/javascript"></script>
-    <script src="pages/talks.js" type="text/javascript"></script>
     <script>
-        window.onload = function () {
-            var main = document.getElementById("main");
-            page.prepend_navigation(main, "indigo");
-            page.append_footer(main, "indigo");
+        const talks = [{
+            "name": "Intro to Secure Cryptography",
+            "link": "https://docs.google.com/presentation/d/1vOGB6qleJCOJqziWtwupg8KF5MdYpLC_WPsnyvKbyR0/edit?usp=sharing",
+            "info": [
+                "Prepared for Georgia Tech's [Theory Club](https://theoryclub.github.io/) in Fall 2017",
+                "Details the design and implementation of a secure cryptosystem according to the 2016 NSA CNSA Suite",
+                "Explains a cryptosystem as solving the problem of providing secret communication among a pair of entities who want to verify message integrity",
+                "Introduces basic, insecure encryption, decryption, key exchange, and integrity algorithms, then examines in detail Diffie-Hellman-Merkle key exchange, AES encryption and decryption, and SHA-3 hashing and authentication"
+            ]
+        }, {
+            "name": "Intro to Semi-supervised and Multi-task Learning",
+            "link": "https://docs.google.com/presentation/d/1COBPfueSqAtpUsxyHsFPCW0xGpgGakBj9NBxZMcQO8I/edit?usp=sharing",
+            "info": [
+                "Prepared for Georgia Tech's [AI club](https://gtagency.github.io/) in Spring 2018",
+                "Introduces the semi-supervised and multi-task learning problems in relation to each other and other machine learning domains",
+                "Examines the strengths and weaknesses of a selection of semi-supervised and multi-task models and approaches, including ladder networks, semi-supervised expectation maximization, and transductive SVMs"
+            ]
+        }, {
+            "name": "Turing Completeness",
+            "link": "https://docs.google.com/presentation/d/1XOs2QclYwj14VW_efBVJUZuD_DDDBpVMrMHm5p5Fjsc/edit?usp=sharing",
+            "info": [
+                "Prepared for Georgia Tech's [Theory Club](https://theoryclub.github.io/) in Spring 2018",
+                "Introduces standard automata in the context of computation models and language theory, including DFAs and regular languages; PDAs and context free grammars; and Turing machines and decidable languages",
+                "Explains Turing completeness and the process of reducing a machine to a Turing machine to demonstrate Turing completeness",
+                "Examines many surprisingly Turing complete machines, including cellular automata, Java generics, the x86 Memory Management Unit, Dwarf Fortress, and Power point"
+            ]
+        }];
 
-            var talk_accordion = document.getElementById("talks", "indigo");
-            for (var i = 0; i < talks.length; i++) {
-                accordion.add_card(talks[i], talk_accordion);
-            }
+        window.onload = function () {
+            let main = document.getElementById("main");
+            page.prepend_navigation(main, "indigo");
+
+            let talk_elements = page.make_list_elements(talks);
+            talk_elements.forEach(element => main.appendChild(element));
         };
     </script>
 </head>
 
 <body>
-    <div id="main" class="w3-margin-top w3-display-topmiddle w3-col l6 m12 s12 w3-mobile ">
-        <div id="talks" class="w3-panel">
-        </div>
+    <div id="main" class="w3-display-top w3-mobile">
     </div>
 </body>
 

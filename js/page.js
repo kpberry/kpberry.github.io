@@ -7,6 +7,9 @@ page.nav_links = [{
     "href": "projects.html",
     "text": "Projects"
 }, {
+    "href": "talks.html",
+    "text": "Talks"
+}, {
     "href": "res/kevin_berry_resume.pdf",
     "text": "Resume"
 }, {
