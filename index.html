@@ -5,39 +5,37 @@
     <link rel="stylesheet" type="text/css" href="styles/w3.css" />
     <script src="js/page.js" type="text/javascript"></script>
     <script>
+        const sections = [{
+            "name": "I am Kevin Berry",
+            "info": [
+                "a machine learning engineer at [Worthix](https://www.worthix.com)",
+                "a computer science grad from [Georgia Tech](https://www.gatech.edu)",
+                "a former teaching assistant for CS 2110",
+                "a [programmer](https://github.com/kpberry)",
+                "a [musician](https://kevinberry.bandcamp.com)",
+            ],
+        }, {
+            "name": "I am interested in",
+            "info": [
+                "artificial intelligence",
+                "efficient and minimalist design",
+                "human and computer languages",
+                "music technology and effects",
+                "computer modeling and simulation"
+            ]
+        }];
+
         window.onload = function () {
             var main = document.getElementById("main");
             page.prepend_navigation(main, "indigo");
+            let section_elements = page.make_list_elements(sections);
+            section_elements.forEach(element => main.appendChild(element));
         };
     </script>
 </head>
 
 <body>
     <div class="w3-display-top w3-mobile" id="main">
-        <div class="w3-panel">
-            <h5 class="w3-text-indigo">I am Kevin Berry</h5>
-            <ul class="w3-ul">
-                <li>a machine learning engineer at
-                    <a href="https://www.worthix.com" target="_blank" class="w3-hover-text-indigo">Worthix</a>
-                </li>
-                <li>a computer science grad from 
-                    <a href="https://www.gatech.edu" target="_blank" class="w3-hover-text-indigo">Georgia Tech</a>
-                </li>
-                <li>a former teaching assistant for CS 2110</li>
-                <li>a musician</li>
-                <li>a programmer</li>
-            </ul>
-        </div>
-        <div class="w3-panel">
-            <h5 class="w3-text-indigo">I am interested in</h5>
-            <ul class="w3-ul">
-                <li>artificial intelligence</li>
-                <li>efficient and minimalist design</li>
-                <li>human and computer languages</li>
-                <li>music technology and effects</li>
-                <li>computer modeling and simulation</li>
-            </ul>
-        </div>
     </div>
 </body>
 
