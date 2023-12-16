@@ -176,15 +176,13 @@ var game = function (canv) {
 
     var self = {};
 
-    const twoPi = 2 * Math.PI;
-
     self.setDims = function (x, y) {
         width = x;
         height = y;
     };
 
     self.setViewingRadius = function (v) {
-        viewingRadius = v;
+        viewingRadius = +v;
         sqrViewingRadius = v * v;
     };
 
@@ -339,8 +337,8 @@ var game = function (canv) {
 
         var sectors = [];
         boids.forEach(boid => {
-            let x = Math.round(boid.x * invViewingRadius);
-            let y = Math.round(boid.y * invViewingRadius);
+            let x = Math.floor(boid.x * invViewingRadius);
+            let y = Math.floor(boid.y * invViewingRadius);
             if (sectors[x] == undefined) {
                 sectors[x] = [];
             }
