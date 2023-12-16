@@ -145,7 +145,7 @@ var addToggle = function (ul, label, oninput, value) {
 
     container.appendChild(labelElement);
     container.appendChild(input);
-    
+
     li.appendChild(container);
 
     ul.appendChild(li);
@@ -250,56 +250,83 @@ var game = function (canv) {
         ];
     };
 
-    var drawBoids = function () {
-        ctx.fillStyle = backgroundColor;
-        ctx.fillRect(0, 0, width, height);
-        ctx.fillStyle = boidColor;
+    let drawBoid = function (boid) {
         var right = [boidSize, 0];
         var top = [-boidSize / 2, -boidSize / 2];
         var bottom = [-boidSize / 2, boidSize / 2];
-        var middle = [0, 0];
-        for (var i = 0; i < numBoids; i++) {
-            var x = boids[i].x;
-            var y = boids[i].y;
-            var vx = boids[i].vx;
-            var vy = boids[i].vy;
-            var mag = Math.sqrt(vx * vx + vy * vy);
-            var rot;
-            if (mag == 0) {
-                rot = [
-                    [1, 0],
-                    [0, 1]
-                ];
-            } else {
-                rot = [
-                    [vx / mag, -vy / mag],
-                    [vy / mag, vx / mag]
-                ];
-            }
 
-            var r = matmul2x2by2x1(rot, right);
-            var t = matmul2x2by2x1(rot, top);
-            var b = matmul2x2by2x1(rot, bottom);
-            var m = [x, y];
-            r = [r[0] + x, r[1] + y];
-            t = [t[0] + x, t[1] + y];
-            b = [b[0] + x, b[1] + y];
-
-            ctx.beginPath();
-            ctx.moveTo(boids[i].x, boids[i].y);
-            ctx.lineTo(r[0], r[1]);
-            ctx.lineTo(t[0], t[1]);
-            ctx.lineTo(m[0], m[1]);
-            ctx.lineTo(b[0], b[1]);
-            ctx.lineTo(r[0], r[1]);
-            ctx.closePath();
-            ctx.fill();
+        var x = boid.x;
+        var y = boid.y;
+        var vx = boid.vx;
+        var vy = boid.vy;
+        var mag = Math.sqrt(vx * vx + vy * vy);
+        var rot;
+        if (mag == 0) {
+            rot = [
+                [1, 0],
+                [0, 1]
+            ];
+        } else {
+            rot = [
+                [vx / mag, -vy / mag],
+                [vy / mag, vx / mag]
+            ];
         }
+
+        var r = matmul2x2by2x1(rot, right);
+        var t = matmul2x2by2x1(rot, top);
+        var b = matmul2x2by2x1(rot, bottom);
+        var m = [x, y];
+        r = [r[0] + x, r[1] + y];
+        t = [t[0] + x, t[1] + y];
+        b = [b[0] + x, b[1] + y];
+
+        ctx.fillStyle = boidColor;
+        ctx.beginPath();
+        ctx.moveTo(boid.x, boid.y);
+        ctx.lineTo(r[0], r[1]);
+        ctx.lineTo(t[0], t[1]);
+        ctx.lineTo(m[0], m[1]);
+        ctx.lineTo(b[0], b[1]);
+        ctx.lineTo(r[0], r[1]);
+        ctx.closePath();
+        ctx.fill();
+    };
+
+    var drawBoids = function () {
+        ctx.fillStyle = backgroundColor;
+        ctx.fillRect(0, 0, width, height);
+        boids.forEach(drawBoid);
     };
 
     self.act = function () {
         drawBoids();
         applyRules();
+    };
+
+    let getNeighbors = function (boid, sectors) {
+        var neighbors = [];
+        let [x, y] = boid.sectorCoords;
+        for (var j = x - 1; j <= x + 1; j++) {
+            for (var k = y - 1; k <= y + 1; k++) {
+                if (sectors[j] !== undefined &&
+                    sectors[j][k] !== undefined) {
+                    var sector = sectors[j][k];
+
+                    for (var q = 0; q < sector.length; q++) {
+                        var neighbor = sector[q];
+
+                        var dx = (neighbor.x - boid.x);
+                        var dy = (neighbor.y - boid.y);
+                        var sqrDist = dx * dx + dy * dy;
+                        if (sqrDist <= sqrViewingRadius && boid !== neighbor) {
+                            neighbors.push(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+        return neighbors;
     };
 
     var applyRules = function () {
@@ -308,143 +335,100 @@ var game = function (canv) {
         if (viewingRadius <= 0) {
             return;
         }
+        let invViewingRadius = 1 / viewingRadius;
 
         var sectors = [];
-        for (var i = 0; i < numBoids; i++) {
-            var x = Math.round(boids[i].x / viewingRadius);
-            var y = Math.round(boids[i].y / viewingRadius);
+        boids.forEach(boid => {
+            let x = Math.round(boid.x * invViewingRadius);
+            let y = Math.round(boid.y * invViewingRadius);
             if (sectors[x] == undefined) {
                 sectors[x] = [];
             }
             if (sectors[x][y] === undefined) {
-                sectors[x][y] = [i];
+                sectors[x][y] = [boid];
             } else {
-                sectors[x][y].push(i);
+                sectors[x][y].push(boid);
             }
-            boids[i].sector_coords = [x, y];
-        }
+            boid.sectorCoords = [x, y];
+        });
 
-        for (var i = 0; i < numBoids; i++) {
-            var neighbors = [];
-            var sector_coords = boids[i].sector_coords;
-            var x = sector_coords[0];
-            var y = sector_coords[1];
-            for (var j = x - 1; j <= x + 1; j++) {
-                for (var k = y - 1; k <= y + 1; k++) {
-                    if (sectors[j] !== undefined &&
-                        sectors[j][k] !== undefined) {
-                        var sector = sectors[j][k];
+        boids.forEach(boid => {
+            let neighbors = getNeighbors(boid, sectors);
 
-                        for (var q = 0; q < sector.length; q++) {
-                            var b = sector[q];
-                            var dx = (boids[b].x - boids[i].x);
-                            var dy = (boids[b].y - boids[i].y);
-                            var sqrDist = dx * dx + dy * dy;
-                            if (sqrDist <= sqrViewingRadius && i !== b) {
-                                neighbors.push(b);
+            if (neighbors.length > 0) {
+                let [sx, sy] = separationRule(boid, neighbors);
+                let [ax, ay] = alignmentRule(boid, neighbors);
+                let [cx, cy] = cohesionRule(boid, neighbors);
 
-                                if (showLines) {
-                                    ctx.beginPath();
-                                    ctx.moveTo(boids[i].x, boids[i].y);
-                                    ctx.lineTo(boids[b].x, boids[b].y);
-                                    ctx.closePath();
-                                    ctx.stroke();
-                                }
-                            }
-                        }
-                    }
+                boid.ax = sx * separationCoefficient + ax * alignmentCoefficient + cx * cohesionCoefficient;
+                boid.ay = sy * separationCoefficient + ay * alignmentCoefficient + cy * cohesionCoefficient;
+
+                if (showLines) {
+                    neighbors.forEach(neighbor => {
+                        ctx.beginPath();
+                        ctx.moveTo(boid.x, boid.y);
+                        ctx.lineTo(neighbor.x, neighbor.y);
+                        ctx.closePath();
+                        ctx.stroke();
+                    });
                 }
             }
+        });
 
-            separationRule(boids[i], neighbors);
-            alignmentRule(boids[i], neighbors);
-            cohesionRule(boids[i], neighbors);
-        }
+        boids.forEach(boid => {
+            boid.vx += boid.ax;
+            boid.vy += boid.ay;
 
-        for (i = 0; i < numBoids; i++) {
-            boids[i].vx += boids[i].ax;
-            boids[i].vy += boids[i].ay;
-
-            var vx = boids[i].vx;
-            var vy = boids[i].vy;
+            var vx = boid.vx;
+            var vy = boid.vy;
             var v_mag = Math.sqrt(vx * vx + vy * vy);
             if (v_mag > vMax) {
-                boids[i].vx = vx / v_mag * vMax;
-                boids[i].vy = vy / v_mag * vMax;
+                boid.vx = vx / v_mag * vMax;
+                boid.vy = vy / v_mag * vMax;
             }
 
-            boids[i].x += boids[i].vx;
-            boids[i].y += boids[i].vy;
-            boids[i].ax = 0;
-            boids[i].ay = 0;
+            boid.x += boid.vx;
+            boid.y += boid.vy;
 
-            if (boids[i].x > width + 10) {
-                boids[i].x = -10;
-            } else if (boids[i].x < -10) {
-                boids[i].x = width + 10;
+            if (boid.x > width + 10) {
+                boid.x = -10;
+            } else if (boid.x < -10) {
+                boid.x = width + 10;
             }
 
-            if (boids[i].y > height + 10) {
-                boids[i].y = -10;
-            } else if (boids[i].y < -10) {
-                boids[i].y = height + 10;
+            if (boid.y > height + 10) {
+                boid.y = -10;
+            } else if (boid.y < -10) {
+                boid.y = height + 10;
             }
-        }
+        })
     };
 
     var separationRule = function (boid, neighbors) {
-        var temp = {
-            x: 0,
-            y: 0
-        };
-        for (var i = 0; i < neighbors.length; i++) {
-            var dx = boid.x - boids[neighbors[i]].x;
-            var dy = boid.y - boids[neighbors[i]].y;
-            var mag = Math.sqrt(dx * dx + dy * dy);
-            if (mag > 1) {
-                dx *= separationCoefficient / mag;
-                dy *= separationCoefficient / mag;
-            }
-            temp.x += dx;
-            temp.y += dy;
+        let sx = 0;
+        let sy = 0;
 
-        }
-        boid.ax += temp.x;
-        boid.ay += temp.y;
+        neighbors.forEach(neighbor => {
+            let dx = boid.x - neighbor.x;
+            let dy = boid.y - neighbor.y;
+            let invDist = 1 / Math.sqrt(dx * dx + dy * dy);
+            sx += dx * invDist;
+            sy += dy * invDist;
+        });
+
+        return [sx, sy];
     };
 
     var alignmentRule = function (boid, neighbors) {
-        if (neighbors.length === 0) {
-            return;
-        }
-        var mag = {
-            x: 0,
-            y: 0
-        };
-        for (var i = 0; i < neighbors.length; i++) {
-            mag.x += boids[neighbors[i]].vx;
-            mag.y += boids[neighbors[i]].vy;
-        }
-        boid.ax += mag.x * alignmentCoefficient;
-        boid.ay += mag.y * alignmentCoefficient;
+        let mx = neighbors.reduce((total, neighbor) => total + neighbor.vx, 0);
+        let my = neighbors.reduce((total, neighbor) => total + neighbor.vy, 0);
+        return [mx, my];
     };
 
     var cohesionRule = function (boid, neighbors) {
-        if (neighbors.length === 0) {
-            return;
-        }
-        var cm = {
-            x: 0,
-            y: 0
-        };
-        for (var i = 0; i < neighbors.length; i++) {
-            cm.x += boids[neighbors[i]].x;
-            cm.y += boids[neighbors[i]].y;
-        }
-        cm.x /= i;
-        cm.y /= i;
-        boid.ax += (cm.x - boid.x) * cohesionCoefficient;
-        boid.ay += (cm.y - boid.y) * cohesionCoefficient;
+        let cx = neighbors.reduce((total, neighbor) => total + neighbor.x, 0) / neighbors.length - boid.x;
+        let cy = neighbors.reduce((total, neighbor) => total + neighbor.y, 0) / neighbors.length - boid.y;
+        return [cx, cy];
     };
 
     return self;
